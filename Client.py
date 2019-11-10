@@ -1,5 +1,8 @@
 import socket
 import miniaudio
+import time
+MSG_SIZE = 8192
+SAMPLE_RATE = 48000
 STREAM_ACTION = "STREAM"
 FINISH = b"finish"
 
@@ -10,20 +13,28 @@ class Client(object):
         self.device = miniaudio.PlaybackDevice()
         self.server_address = ("127.0.0.1", 8821)
 
-    def play_song(self):
+    def receive_song(self):
         new_data, server_address = self.receive_msg()
         data = b''
         self.server_address = server_address
+        # stream = miniaudio.stream_memory(new_data)
+        # self.device.start(stream)
+        yield new_data
         while new_data != FINISH:
             data = data + new_data
             new_data, server_address = self.receive_msg()
-            print(new_data)
+            # self.device.stop()
+            # print("start")
+            # stream = miniaudio.stream_memory(new_data)
+            # self.device.start(stream)
+            yield new_data
 
-        print("started playing")
-        stream = miniaudio.stream_memory(data)
-        self.device.start(stream)
-        input("press any key to stop")
-        self.device.close()
+    def play_song(self):
+        for i in self.receive_song():
+            stream = miniaudio.stream_memory(i)
+            self.device.start(stream)
+            time.sleep(MSG_SIZE/SAMPLE_RATE)
+            self.device.stop()
 
     def send_req(self):
         self.send_message(STREAM_ACTION.encode())
@@ -33,6 +44,7 @@ class Client(object):
         while action != "exit":
             self.send_req()
             self.play_song()
+            action = input("enter action: ")
 
     def send_message(self, data):
         header, data = format_msg(data)
@@ -41,7 +53,6 @@ class Client(object):
 
     def receive_msg(self):
         size, client_address = self.my_socket.recvfrom(4)
-        print(size)
         data, client_address = self.my_socket.recvfrom(int(size))
         return data, client_address
 
@@ -49,7 +60,6 @@ class Client(object):
 def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(4)
-    print(header)
     msg = (header.encode(), msg)
     return msg
 
