@@ -1,7 +1,9 @@
 import socket
 import sys
 import miniaudio
+import pyaudio
 import time
+import wave
 MSG_SIZE = 8192
 SAMPLE_RATE = 48000
 PATH = r"C:\ishufi\test_song.mp3"
