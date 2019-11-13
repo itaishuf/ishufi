@@ -1,6 +1,8 @@
 import socket
 import miniaudio
 import time
+import pyaudio
+
 MSG_SIZE = 8192
 SAMPLE_RATE = 48000
 STREAM_ACTION = "STREAM"
@@ -15,25 +17,17 @@ class Client(object):
 
     def receive_song(self):
         new_data, server_address = self.receive_msg()
-        data = b''
         self.server_address = server_address
-        # stream = miniaudio.stream_memory(new_data)
-        # self.device.start(stream)
         yield new_data
         while new_data != FINISH:
-            data = data + new_data
             new_data, server_address = self.receive_msg()
-            # self.device.stop()
-            # print("start")
-            # stream = miniaudio.stream_memory(new_data)
-            # self.device.start(stream)
             yield new_data
 
     def play_song(self):
         for i in self.receive_song():
             stream = miniaudio.stream_memory(i)
             self.device.start(stream)
-            time.sleep(MSG_SIZE/SAMPLE_RATE)
+            time.sleep((MSG_SIZE * 0.9) / SAMPLE_RATE)
             self.device.stop()
 
     def send_req(self):
