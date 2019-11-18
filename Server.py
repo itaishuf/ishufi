@@ -2,7 +2,7 @@ import socket
 import sys
 import miniaudio
 import time
-MSG_SIZE = 8192
+MSG_SIZE = 40000
 SAMPLE_RATE = 48000
 PATH = r"C:\ishufi\test_song.mp3"
 FINISH = b"finish"
@@ -37,11 +37,12 @@ class Server(object):
             while data != b'':
                 data = song.read(MSG_SIZE)
                 self.send_message(data)
-                time.sleep((MSG_SIZE*2)/SAMPLE_RATE)
+                time.sleep(MSG_SIZE * 0.5/SAMPLE_RATE)
             self.send_message(FINISH)
+            print("finished")
 
     def receive_msg(self):
-        size, client_address = self.server_socket.recvfrom(4)
+        size, client_address = self.server_socket.recvfrom(5)
         data, client_address = self.server_socket.recvfrom(int(size))
         return data, client_address
 
@@ -58,12 +59,12 @@ class Server(object):
 
 def format_msg(msg):
     header = str(len(msg))
-    header = header.zfill(4)
+    header = header.zfill(5)
     return header.encode(), msg
 
 
 def main():
-    server = Server("127.0.0.1", 8821)
+    server = Server("127.0.0.1", 8822)
     server.handle_client()
 
 

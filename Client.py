@@ -1,10 +1,12 @@
 import socket
 import miniaudio
 import time
-import pyaudio
+import queue
+import asyncio
 
-MSG_SIZE = 8192
+MSG_SIZE = 40000
 SAMPLE_RATE = 48000
+NO_LAG_MOD = 1.95
 STREAM_ACTION = "STREAM"
 FINISH = b"finish"
 
@@ -13,22 +15,42 @@ class Client(object):
     def __init__(self):
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.device = miniaudio.PlaybackDevice()
-        self.server_address = ("127.0.0.1", 8821)
+        self.server_address = ("127.0.0.1", 8822)
+        self.chunk_queue = queue.Queue()
 
-    def receive_song(self):
+    async def receive_song(self):
+        packet_index = 2
+        print("receive_song")
         new_data, server_address = self.receive_msg()
         self.server_address = server_address
-        yield new_data
+        data = new_data
         while new_data != FINISH:
             new_data, server_address = self.receive_msg()
-            yield new_data
+            # print(len(data), packet_index, MSG_SIZE)
+            if len(data) == packet_index * MSG_SIZE:
+                print("put")
+                self.chunk_queue.put(data)
+                if packet_index < 8:
+                    packet_index += 1
+                else:
+                    await asyncio.sleep(0.2)
+                data = b''
+            elif len(data) < packet_index * MSG_SIZE:
+                data += new_data
 
-    def play_song(self):
-        for i in self.receive_song():
-            stream = miniaudio.stream_memory(i)
+    async def play_song(self):
+        await asyncio.sleep(1)
+        print("play_song")
+        while not self.chunk_queue.empty():
+            data = self.chunk_queue.get()
+            stream = miniaudio.stream_memory(data)
             self.device.start(stream)
-            time.sleep((MSG_SIZE * 0.9) / SAMPLE_RATE)
+            print(len(data) * NO_LAG_MOD / SAMPLE_RATE)
+            await asyncio.sleep(len(data) * NO_LAG_MOD / SAMPLE_RATE)
             self.device.stop()
+
+    async def run(self):
+        await asyncio.gather(self.receive_song(), self.play_song())
 
     def send_req(self):
         self.send_message(STREAM_ACTION.encode())
@@ -37,7 +59,9 @@ class Client(object):
         action = input("enter action: ")
         while action != "exit":
             self.send_req()
-            self.play_song()
+            print("starting")
+            asyncio.run(self.run())
+            print("finished")
             action = input("enter action: ")
 
     def send_message(self, data):
@@ -46,14 +70,14 @@ class Client(object):
         self.my_socket.sendto(data, self.server_address)
 
     def receive_msg(self):
-        size, client_address = self.my_socket.recvfrom(4)
+        size, client_address = self.my_socket.recvfrom(5)
         data, client_address = self.my_socket.recvfrom(int(size))
         return data, client_address
 
 
 def format_msg(msg):
     header = str(len(msg))
-    header = header.zfill(4)
+    header = header.zfill(5)
     msg = (header.encode(), msg)
     return msg
 
