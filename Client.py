@@ -1,12 +1,14 @@
 import socket
 import miniaudio
+import pyaudio
 import time
 import queue
-import asyncio
+import threading
 
-MSG_SIZE = 40000
+MSG_SIZE = 16000
 SAMPLE_RATE = 48000
-NO_LAG_MOD = 1.95
+CHANNELS = 2
+NO_LAG_MOD = 0.1
 STREAM_ACTION = "STREAM"
 FINISH = b"finish"
 
@@ -14,43 +16,21 @@ FINISH = b"finish"
 class Client(object):
     def __init__(self):
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.device = miniaudio.PlaybackDevice()
         self.server_address = ("127.0.0.1", 8822)
-        self.chunk_queue = queue.Queue()
+        self.p = pyaudio.PyAudio()
 
-    async def receive_song(self):
-        packet_index = 2
+    def play(self):
         print("receive_song")
         new_data, server_address = self.receive_msg()
         self.server_address = server_address
-        data = new_data
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=SAMPLE_RATE, output=True, frames_per_buffer=4000)
+        start = time.time()
         while new_data != FINISH:
+            stream.write(new_data)
             new_data, server_address = self.receive_msg()
-            # print(len(data), packet_index, MSG_SIZE)
-            if len(data) == packet_index * MSG_SIZE:
-                print("put")
-                self.chunk_queue.put(data)
-                if packet_index < 8:
-                    packet_index += 1
-                else:
-                    await asyncio.sleep(0.2)
-                data = b''
-            elif len(data) < packet_index * MSG_SIZE:
-                data += new_data
-
-    async def play_song(self):
-        await asyncio.sleep(1)
-        print("play_song")
-        while not self.chunk_queue.empty():
-            data = self.chunk_queue.get()
-            stream = miniaudio.stream_memory(data)
-            self.device.start(stream)
-            print(len(data) * NO_LAG_MOD / SAMPLE_RATE)
-            await asyncio.sleep(len(data) * NO_LAG_MOD / SAMPLE_RATE)
-            self.device.stop()
-
-    async def run(self):
-        await asyncio.gather(self.receive_song(), self.play_song())
+        end = time.time()
+        print(end-start)
 
     def send_req(self):
         self.send_message(STREAM_ACTION.encode())
@@ -60,7 +40,8 @@ class Client(object):
         while action != "exit":
             self.send_req()
             print("starting")
-            asyncio.run(self.run())
+            self.play()
+            # self.run()
             print("finished")
             action = input("enter action: ")
 
