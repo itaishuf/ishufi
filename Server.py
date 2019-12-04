@@ -6,6 +6,8 @@ MSG_SIZE = 8000
 SAMPLE_RATE = 48000
 NO_LAG_MOD = 0.23
 HEADER_SIZE = 5
+IP = "127.0.0.1"
+PORT = 8821
 PATH = r"C:\ishufi\test_song.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''
@@ -67,7 +69,7 @@ def format_msg(msg):
 
 
 def main():
-    server = Server("127.0.0.1", 8822)
+    server = Server(IP, PORT)
     server.handle_client()
 
 
