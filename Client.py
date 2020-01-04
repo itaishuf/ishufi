@@ -9,6 +9,7 @@ NO_LAG_MOD = 0.1
 IP = "127.0.0.1"
 PORT = 8821
 STREAM_ACTION = "STREAM"
+EXIT_ACTION = "EXIT"
 FINISH = b"finish"
 
 
@@ -17,21 +18,25 @@ class Client(object):
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
+        self.song_playing = False
 
     def play(self):
-        print("receive_song")
-        new_data, server_address = self.receive_msg()
-        self.server_address = server_address
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=SAMPLE_RATE,
-                        output=True, frames_per_buffer=4000)
-        start = time.time()
-        while new_data != FINISH:
-            if new_data is not None:
-                stream.write(new_data)
+        try:
+            print("receive_song")
             new_data, server_address = self.receive_msg()
-        end = time.time()
-        print(end-start)
+            self.server_address = server_address
+            p = pyaudio.PyAudio()
+            stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=SAMPLE_RATE,
+                            output=True, frames_per_buffer=4000)
+            start = time.time()
+            while new_data != FINISH:
+                if new_data is not None:
+                    stream.write(new_data)
+                new_data, server_address = self.receive_msg()
+            end = time.time()
+            print(end-start)
+        except socket.error as e:
+            print(e)
 
     def send_req(self):
         self.send_message(STREAM_ACTION.encode())
@@ -40,6 +45,17 @@ class Client(object):
         self.send_req()
         print("starting")
         self.play()
+        print("finished")
+
+    def play_song(self):
+        if self.song_playing:
+            print("song already playing")
+            return
+        self.song_playing = True
+        self.send_req()
+        print("starting")
+        self.play()
+        self.song_playing = False
         print("finished")
 
     def send_message(self, data):
@@ -54,7 +70,10 @@ class Client(object):
             return data, client_address
         except OSError as e:
             print(e)
-            return None, None
+            return FINISH, None
+
+    def close_com(self):
+        self.my_socket.close()
 
 
 def format_msg(msg):

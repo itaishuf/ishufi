@@ -4,14 +4,15 @@ import miniaudio
 import time
 MSG_SIZE = 8000
 SAMPLE_RATE = 48000
-NO_LAG_MOD = 0.23
+NO_LAG_MOD = 0.24095
 HEADER_SIZE = 5
 IP = "127.0.0.1"
 PORT = 8821
-PATH = r"C:\ishufi\test_song.wav"
+PATH = r"C:\ishufi\test_song_trimmed.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''
-
+STREAM_ACTION = "STREAM"
+EXIT_ACTION = "EXIT"
 
 class Server(object):
     def __init__(self, ip, port):
@@ -31,7 +32,7 @@ class Server(object):
         return data
 
     def choose_action(self, action):
-        if action == "STREAM":
+        if action == STREAM_ACTION:
             self.stream_song(PATH)
 
     def stream_song(self, path):
@@ -57,9 +58,13 @@ class Server(object):
         self.server_socket.sendto(data, self.client_address)
 
     def handle_client(self):
-        while True:
-            client_req = self.handle_req()
-            self.choose_action(client_req)
+        try:
+            while True:
+                client_req = self.handle_req()
+                self.choose_action(client_req)
+        except socket.error as e:
+            print(e)
+
 
 
 def format_msg(msg):

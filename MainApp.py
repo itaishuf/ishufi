@@ -1,12 +1,14 @@
 import tkinter as tk
 import tkinter.font
 import Client
+import threading
 
 
 class Window(tk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master, manager):
         tk.Frame.__init__(self, master)
+        self.manager = manager
         self.master = master
         self.search_box = None
         self.client = Client.Client()
@@ -14,10 +16,10 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
-        self.master.title("ishufi")
+        self.master.title("ishufi2")
         self.pack(fill=tk.BOTH, expand=1)
 
-        quit_button = tk.Button(self, text="Quit", command=exit_window)
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit)
         quit_button.place(x=180, y=250)
 
         play_button = tk.Button(self, text="Play", command=self.handle_client)
@@ -32,12 +34,17 @@ class Window(tk.Frame):
         print(self.search_box.get())
 
     def handle_client(self):
-        self.client.handle_client("play")
+        t_play = threading.Thread(target=self.client.play_song)
+        t_play.start()
 
+    def call_manager_exit(self):
+        self.client.close_com()
+        self.manager.close_frame()
 
-def exit_window():
-    print("quit")
-    exit()
+    def exit_window(self):
+        print("quit")
+        self.destroy()
+        self.quit()
 
 
 def main():
