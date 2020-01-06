@@ -10,6 +10,7 @@ IP = "127.0.0.1"
 PORT = 8821
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
+LOGIN_ACTION = "LOGIN"
 FINISH = b"finish"
 
 
@@ -38,25 +39,26 @@ class Client(object):
         except socket.error as e:
             print(e)
 
-    def send_req(self):
-        self.send_message(STREAM_ACTION.encode())
-
-    def handle_client(self, action):
-        self.send_req()
-        print("starting")
-        self.play()
-        print("finished")
+    # def handle_client(self, action):
+    #     self.send_req()
+    #     print("starting")
+    #     self.play()
+    #     print("finished")
 
     def play_song(self):
         if self.song_playing:
-            print("song already playing")
             return
         self.song_playing = True
-        self.send_req()
-        print("starting")
+        self.send_message(STREAM_ACTION)
         self.play()
         self.song_playing = False
-        print("finished")
+
+    def login(self, username, password):
+        to_send = LOGIN_ACTION + " " + username + " " + password
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        can_login, msg = data.split()
+        print(can_login, msg)
 
     def send_message(self, data):
         header, data = format_msg(data)
@@ -65,9 +67,9 @@ class Client(object):
 
     def receive_msg(self):
         try:
-            size, client_address = self.my_socket.recvfrom(5)
-            data, client_address = self.my_socket.recvfrom(int(size))
-            return data, client_address
+            size, server_address = self.my_socket.recvfrom(5)
+            data, server_address = self.my_socket.recvfrom(int(size))
+            return data , server_address
         except OSError as e:
             print(e)
             return FINISH, None
@@ -79,13 +81,11 @@ class Client(object):
 def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(5)
-    msg = (header.encode(), msg)
-    return msg
+    return header.encode(), msg.encode()
 
 
 def main():
-    client = Client()
-    client.handle_client()
+    pass
 
 
 if __name__ == '__main__':

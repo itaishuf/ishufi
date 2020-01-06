@@ -2,6 +2,9 @@
 
 
 def main():
+    str = 'abc'
+    str2 = '123'
+    print(str+str2)
     with open("sayarot.txt", 'r', encoding='utf-8') as txt:
         with open("flipped.txt", 'r+', encoding='utf-8') as wrt:
             wrt.truncate(0)
