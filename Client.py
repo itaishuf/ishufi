@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import socket
 import pyaudio
 import time
@@ -11,6 +12,7 @@ PORT = 8821
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
+ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
 FINISH = b"finish"
 
@@ -58,6 +60,19 @@ class Client(object):
         to_send = LOGIN_ACTION + " " + username + " " + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
+        data = data.decode()
+        if data == INVALID_REQ:
+            return False, "didn't enter username or password"
+        data = data.split()
+        can_login = eval(data[0])
+        msg = " ".join(data[1:])
+        return can_login, msg
+
+    def add_user(self, username, password):
+        to_send = ADD_ACTION + " " + username + " " + password
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        data = data.decode()
         if data == INVALID_REQ:
             return False, "didn't enter username or password"
         data = data.split()
@@ -74,10 +89,13 @@ class Client(object):
         try:
             size, server_address = self.my_socket.recvfrom(5)
             data, server_address = self.my_socket.recvfrom(int(size))
-            return data.decode() , server_address
+            return data , server_address
         except OSError as e:
             print(e)
             return FINISH, None
+
+    def receive_msg_not_song(self, data, server_address):
+        return data.decode(), server_address
 
     def close_com(self):
         self.my_socket.close()

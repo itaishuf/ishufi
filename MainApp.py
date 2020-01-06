@@ -16,7 +16,7 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
-        self.master.title("ishufi2")
+        self.master.title("ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
         quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit)

@@ -1,6 +1,10 @@
 import tkinter as tk
 import tkinter.font
+import tkinter.messagebox
 import Client
+import database
+import MainMenu
+import MainApp
 
 
 class Window(tk.Frame):
@@ -17,33 +21,45 @@ class Window(tk.Frame):
 
     def init_window(self):
         self.master.title("Ishufi")
+        quit_button = tk.Button(self.master, text="Quit", command=self.manager.close_frame)
+        quit_button.place(relx=0.4, rely=0.9, relwidth=0.2)
 
-        quit_button = tk.Button(self, text="Quit", command=self.manager.close_frame)
-        quit_button.place(relx=0.4, rely=0.7, relwidth=0.2)
+        continue_button = tk.Button(self.master, text="Continue", command=self.add_user)
+        continue_button.place(relx=0.4, rely=0.8, relwidth=0.2)
 
-        continue_button = tk.Button(self, text="Continue", command=self.add_user)
-        continue_button.place(relx=0.4, rely=0.6, relwidth=0.2)
+        username_txt = tk.Label(self.master, text="Username")
+        username_txt.place(relx=0.3, rely=0.33, relwidth=0.4)
 
-        username_txt = tk.Label(self, text="Username")
-        username_txt.place(relx=0.3, rely=0.03, relwidth=0.4)
+        sign_in_txt = tk.Label(self.master, text="Sign up", font=tk.font.Font(family='tahoma', size='18'))
+        sign_in_txt.place(relx=0.3, rely=0.01, relwidth=0.4)
 
         self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))
-        self.username_entry.place(relx=0.3, rely=0.1, relwidth=0.4)
+        self.username_entry.place(relx=0.3, rely=0.4, relwidth=0.4)
 
-        password_txt = tk.Label(self, text="Password")
-        password_txt.place(relx=0.3, rely=0.18, relwidth=0.4)
+        password_txt = tk.Label(self.master, text="Password")
+        password_txt.place(relx=0.3, rely=0.48, relwidth=0.4)
 
         self.password_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))
-        self.password_entry.place(relx=0.3, rely=0.25, relwidth=0.4)
+        self.password_entry.place(relx=0.3, rely=0.55, relwidth=0.4)
         self.password_entry.bind('<Return>', self.get_text)
 
     def get_text(self, event):
-        print("getting text")
-        print(self.search_box.get())
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        return username, password
 
     def add_user(self):
-        pass
+        username, password = self.get_text(None)
+        can_login, msg = self.client.add_user(username, password)
+        print(can_login, msg)
+        if can_login:
+            tk.messagebox.showinfo("Ishufi", msg)
+            self.switch_window(MainApp.Window)
+        else:
+            tk.messagebox.showinfo("Ishufi", msg)
 
+    def switch_window(self, window):
+        self.manager.switch_frame(window)
 
     def call_manager_exit(self):
         self.client.close_com()
@@ -56,10 +72,7 @@ class Window(tk.Frame):
 
 
 def main():
-    root = tk.Tk()
-    root.geometry("400x300")
-    app = Window(root)
-    root.mainloop()
+    pass
 
 
 if __name__ == '__main__':

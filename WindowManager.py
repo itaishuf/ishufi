@@ -2,6 +2,7 @@ import tkinter as tk
 import Client
 import MainApp
 import MainMenu
+import AddUserScreen
 
 
 class WindowManager(object):
@@ -21,9 +22,10 @@ class WindowManager(object):
         self.active_frame_class = frame_class
         root.mainloop()
 
-    def close_frame(self, to_switch):
+    def close_frame(self):
         print(self.active_frame_class)
-        self.active_frame_class.exit_window(self.active_frame, to_switch)
+        self.active_frame_class.exit_window(self.active_frame)
+
 
 
 def main():

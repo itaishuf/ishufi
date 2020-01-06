@@ -9,16 +9,18 @@ NO_LAG_MOD = 0.24095
 HEADER_SIZE = 5
 IP = "127.0.0.1"
 PORT = 8821
-PATH = r"C:\ishufi\testing\test_song_trimmed.wav"
+PATH = r"C:\Users\user\ishufi\testing\test_song_trimmed.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
+ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
 REQ_AND_PARAMS = {STREAM_ACTION: 0,
                  LOGIN_ACTION: 2,
-                 EXIT_ACTION: 1}
+                 EXIT_ACTION: 1,
+                 ADD_ACTION: 2}
 
 
 class Server(object):
@@ -42,6 +44,8 @@ class Server(object):
             self.stream_song(PATH)
         elif action == LOGIN_ACTION:
             self.login_check(params[0], params[1])
+        elif action == ADD_ACTION:
+            self.add_check(params[0], params[1])
 
     def stream_song(self, path):
         #print(miniaudio.get_file_info(path))
@@ -56,6 +60,10 @@ class Server(object):
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
+        self.send_message(str(can_login) + " " + msg)
+
+    def add_check(self, username, password):
+        can_login, msg = self.db.add_user(username, password)
         self.send_message(str(can_login) + " " + msg)
 
     def receive_msg(self):
@@ -83,7 +91,9 @@ class Server(object):
 def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(HEADER_SIZE)
-    return header.encode(), msg.encode()
+    if type(msg) == str:
+        msg= msg.encode()
+    return header.encode(), msg
 
 
 def main():
