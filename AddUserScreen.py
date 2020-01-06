@@ -1,10 +1,6 @@
 import tkinter as tk
 import tkinter.font
 import Client
-import MainApp
-import WindowManager
-import AddUserScreen
-import tkinter.messagebox
 
 
 class Window(tk.Frame):
@@ -20,17 +16,13 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
-        self.master.title("ishufi1")
-        self.pack(fill=tk.BOTH, expand=1)
+        self.master.title("Ishufi")
 
-        quit_button = tk.Button(self, text="Quit", command=self.manager_close_frame)
+        quit_button = tk.Button(self, text="Quit", command=self.manager.close_frame)
         quit_button.place(relx=0.4, rely=0.7, relwidth=0.2)
 
-        continue_button = tk.Button(self, text="Continue", command=self.check_user)
+        continue_button = tk.Button(self, text="Continue", command=self.add_user)
         continue_button.place(relx=0.4, rely=0.6, relwidth=0.2)
-
-        add_user_button = tk.Button(self, text="Add User", command=self.add_user)
-        add_user_button.place(relx=0.4, rely=0.5, relwidth=0.2)
 
         username_txt = tk.Label(self, text="Username")
         username_txt.place(relx=0.3, rely=0.03, relwidth=0.4)
@@ -46,31 +38,21 @@ class Window(tk.Frame):
         self.password_entry.bind('<Return>', self.get_text)
 
     def get_text(self, event):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
-        return username, password
+        print("getting text")
+        print(self.search_box.get())
 
     def add_user(self):
-        self.switch_window(AddUserScreen.Window)
+        pass
 
-    def manager_switch_frame(self):
+
+    def call_manager_exit(self):
+        self.client.close_com()
         self.manager.close_frame()
-
-    def check_user(self):
-        username, password = self.get_text(None)
-        can_login, msg = self.client.login(username, password)
-        if can_login:
-            self.switch_window()
-        else:
-            tk.messagebox.showinfo("Ishufi", msg)
-
-    def switch_window(self, Window):
-        self.manager.switch_frame(MainApp.Window)
 
     def exit_window(self):
         print("quit")
-        self.quit()
         self.destroy()
+        self.quit()
 
 
 def main():

@@ -1,6 +1,6 @@
 import socket
 import sys
-import miniaudio
+#import miniaudio
 import time
 import database
 MSG_SIZE = 8000
@@ -15,6 +15,7 @@ EMPTY_MSG = b''
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
+INVALID_REQ = "invalid"
 REQ_AND_PARAMS = {STREAM_ACTION: 0,
                  LOGIN_ACTION: 2,
                  EXIT_ACTION: 1}
@@ -35,6 +36,7 @@ class Server(object):
     def choose_action(self, action, params):
         if REQ_AND_PARAMS.get(action) != len(params):
             print("invalid request")
+            self.send_message(INVALID_REQ)
             return
         if action == STREAM_ACTION:
             self.stream_song(PATH)
@@ -42,7 +44,7 @@ class Server(object):
             self.login_check(params[0], params[1])
 
     def stream_song(self, path):
-        print(miniaudio.get_file_info(path))
+        #print(miniaudio.get_file_info(path))
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
             self.send_message(data)
@@ -54,7 +56,7 @@ class Server(object):
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
-        self.send_message(can_login + " " + msg)
+        self.send_message(str(can_login) + " " + msg)
 
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
@@ -81,7 +83,7 @@ class Server(object):
 def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(HEADER_SIZE)
-    return header.encode(), msg
+    return header.encode(), msg.encode()
 
 
 def main():

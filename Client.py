@@ -11,6 +11,7 @@ PORT = 8821
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
+INVALID_REQ = "invalid"
 FINISH = b"finish"
 
 
@@ -57,8 +58,12 @@ class Client(object):
         to_send = LOGIN_ACTION + " " + username + " " + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        can_login, msg = data.split()
-        print(can_login, msg)
+        if data == INVALID_REQ:
+            return False, "didn't enter username or password"
+        data = data.split()
+        can_login = eval(data[0])
+        msg = " ".join(data[1:])
+        return can_login, msg
 
     def send_message(self, data):
         header, data = format_msg(data)
@@ -69,7 +74,7 @@ class Client(object):
         try:
             size, server_address = self.my_socket.recvfrom(5)
             data, server_address = self.my_socket.recvfrom(int(size))
-            return data , server_address
+            return data.decode() , server_address
         except OSError as e:
             print(e)
             return FINISH, None

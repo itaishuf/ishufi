@@ -21,9 +21,9 @@ class WindowManager(object):
         self.active_frame_class = frame_class
         root.mainloop()
 
-    def close_frame(self):
+    def close_frame(self, to_switch):
         print(self.active_frame_class)
-        self.active_frame_class.exit_window(self.active_frame)
+        self.active_frame_class.exit_window(self.active_frame, to_switch)
 
 
 def main():
