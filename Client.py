@@ -42,17 +42,13 @@ class Client(object):
         except socket.error as e:
             print(e)
 
-    # def handle_client(self, action):
-    #     self.send_req()
-    #     print("starting")
-    #     self.play()
-    #     print("finished")
 
-    def play_song(self):
+    def play_song(self, song):
         if self.song_playing:
             return
         self.song_playing = True
-        self.send_message(STREAM_ACTION)
+        to_send = STREAM_ACTION + " " + song
+        self.send_message(to_send)
         self.play()
         self.song_playing = False
 

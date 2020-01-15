@@ -3,13 +3,14 @@ import sys
 #import miniaudio
 import time
 import database
+from pathlib import Path
 MSG_SIZE = 8000
 SAMPLE_RATE = 48000
 NO_LAG_MOD = 0.24095
 HEADER_SIZE = 5
 IP = "127.0.0.1"
 PORT = 8821
-PATH = r"C:\Users\user\ishufi\testing\test_song_trimmed.wav"
+PATH = r"C:\ishufi\songs\abc.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''
 STREAM_ACTION = "STREAM"
@@ -17,7 +18,7 @@ EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
 ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
-REQ_AND_PARAMS = {STREAM_ACTION: 0,
+REQ_AND_PARAMS = {STREAM_ACTION: 1,
                  LOGIN_ACTION: 2,
                  EXIT_ACTION: 1,
                  ADD_ACTION: 2}
@@ -41,11 +42,19 @@ class Server(object):
             self.send_message(INVALID_REQ)
             return
         if action == STREAM_ACTION:
-            self.stream_song(PATH)
+            path = self.choose_song(params)
+            self.stream_song(path)
         elif action == LOGIN_ACTION:
             self.login_check(params[0], params[1])
         elif action == ADD_ACTION:
             self.add_check(params[0], params[1])
+
+    def choose_song(self, name):
+        path = str(Path.cwd())
+        path += '\songs\\'
+        path += name[0]
+        path += ".wav"
+        return path
 
     def stream_song(self, path):
         #print(miniaudio.get_file_info(path))
@@ -72,6 +81,7 @@ class Server(object):
         data = data.decode()
         data = data.split()
         self.client_address = client_address
+        print(data)
         return data
 
     def send_message(self, data):

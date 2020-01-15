@@ -5,7 +5,7 @@ import os.path
 
 class ConnectionDatabase:
     def __init__(self):
-        self.connection = sqlite3.connect(r"c:\Users\user\ishufi\login_data.db")
+        self.connection = sqlite3.connect(r"c:\ishufi\login_data.db")
         self.cursor = None
 
         self.create_cursor()

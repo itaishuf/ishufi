@@ -22,7 +22,7 @@ class Window(tk.Frame):
         quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit)
         quit_button.place(x=180, y=250)
 
-        play_button = tk.Button(self, text="Play", command=self.handle_client)
+        play_button = tk.Button(self, text="Play", command=self.pick_song)
         play_button.place(x=180, y=200)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))
@@ -30,11 +30,14 @@ class Window(tk.Frame):
         self.search_box.bind('<Return>', self.get_text)
 
     def get_text(self, event):
-        print("getting text")
-        print(self.search_box.get())
+        return self.search_box.get()
 
-    def handle_client(self):
-        t_play = threading.Thread(target=self.client.play_song)
+    def pick_song(self):
+        name = self.get_text(None)
+        self.play_song(name)
+
+    def play_song(self, name):
+        t_play = threading.Thread(target=self.client.play_song, args=(name,))
         t_play.start()
 
     def call_manager_exit(self):
