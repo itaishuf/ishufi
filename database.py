@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import sqlite3
+from pathlib import Path
 import os.path
 
 
 class ConnectionDatabase:
     def __init__(self):
-        self.connection = sqlite3.connect(r"c:\ishufi\login_data.db")
+        loc = str(Path.cwd()) + "\login_data.db"
+        self.connection = sqlite3.connect(loc)
         self.cursor = None
 
         self.create_cursor()
