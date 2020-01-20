@@ -27,7 +27,6 @@ class Client(object):
 
     def play(self):
         try:
-            print("receive_song")
             new_data, server_address = self.receive_msg()
             self.server_address = server_address
             if new_data == INVALID_REQ.encode():
@@ -49,7 +48,6 @@ class Client(object):
 
 
     def play_song(self, lst):
-        print(lst)
         song = lst[0]
         q = lst[1]
         if self.song_playing:
@@ -58,6 +56,7 @@ class Client(object):
         to_send = STREAM_ACTION + " " + song
         self.send_message(to_send)
         msg = self.play()
+        print(msg)
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
         self.song_playing = False

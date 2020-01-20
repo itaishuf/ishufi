@@ -35,7 +35,7 @@ class Window(tk.Frame):
         username_txt = tk.Label(self, text="Username")
         username_txt.place(relx=0.3, rely=0.18, relwidth=0.4)
 
-        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='18'))
+        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg="#8A23F1")
         sign_in_txt.place(relx=0.3, rely=0.01, relwidth=0.4)
 
         self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))

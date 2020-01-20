@@ -4,6 +4,7 @@ import sys
 import time
 import database
 from pathlib import Path
+import os
 MSG_SIZE = 8000
 SAMPLE_RATE = 48000
 NO_LAG_MOD = 0.24095
@@ -54,10 +55,17 @@ class Server(object):
         path += '\songs\\'
         path += name[0]
         path += ".wav"
-        return path
+        print (path)
+        if os.path.exists(path):
+            return path
+        else:
+            return ""
 
     def stream_song(self, path):
         #print(miniaudio.get_file_info(path))
+        if path == "":
+            self.send_message(INVALID_REQ)
+            return
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
             self.send_message(data)
