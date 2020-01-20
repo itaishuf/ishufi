@@ -1,8 +1,12 @@
 import tkinter as tk
 import tkinter.font
+from tkinter import messagebox
 import Client
 import threading
-
+import queue
+import time
+INVALID_REQ = "invalid"
+DONE = "done"
 
 class Window(tk.Frame):
 
@@ -37,8 +41,15 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
-        t_play = threading.Thread(target=self.client.play_song, args=(name,))
+        return_queue = queue.Queue()
+        t_play = threading.Thread(target=self.client.play_song, args=((name, return_queue),))
         t_play.start()
+        time.sleep(0.1)
+        if return_queue.empty():
+            return
+        if return_queue.get() == INVALID_REQ:
+            tk.messagebox.showinfo("Ishufi", "song doesnt exist")
+
 
     def call_manager_exit(self):
         self.client.close_com()

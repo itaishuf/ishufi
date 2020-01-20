@@ -29,7 +29,7 @@ class Window(tk.Frame):
         continue_button = tk.Button(self, text="Continue", command=self.check_user)
         continue_button.place(relx=0.4, rely=0.65, relwidth=0.2)
 
-        add_user_button = tk.Button(self, text="Add User", command=self.add_user)
+        add_user_button = tk.Button(self, text="Register", command=self.add_user)
         add_user_button.place(relx=0.4, rely=0.55, relwidth=0.2)
 
         username_txt = tk.Label(self, text="Username")
@@ -54,7 +54,14 @@ class Window(tk.Frame):
         return username, password
 
     def add_user(self):
-        self.switch_window(AddUserScreen.Window)
+        username, password = self.get_text(None)
+        can_login, msg = self.client.add_user(username, password)
+        print(can_login, msg)
+        if can_login:
+            tk.messagebox.showinfo("Ishufi", msg)
+            self.switch_window(MainApp.Window)
+        else:
+            tk.messagebox.showinfo("Ishufi", msg)
 
     def manager_close_frame(self):
         self.manager.close_frame()

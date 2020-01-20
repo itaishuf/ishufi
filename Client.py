@@ -14,6 +14,7 @@ EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
 ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
+DONE = "done"
 FINISH = b"finish"
 
 
@@ -29,6 +30,8 @@ class Client(object):
             print("receive_song")
             new_data, server_address = self.receive_msg()
             self.server_address = server_address
+            if new_data == INVALID_REQ.encode():
+                return INVALID_REQ
             p = pyaudio.PyAudio()
             stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=SAMPLE_RATE,
                             output=True, frames_per_buffer=4000)
@@ -38,18 +41,25 @@ class Client(object):
                     stream.write(new_data)
                 new_data, server_address = self.receive_msg()
             end = time.time()
-            print(end-start)
+            my_time = end-start
+            print(my_time)
+            return str(my_time)
         except socket.error as e:
             print(e)
 
 
-    def play_song(self, song):
+    def play_song(self, lst):
+        print(lst)
+        song = lst[0]
+        q = lst[1]
         if self.song_playing:
             return
         self.song_playing = True
         to_send = STREAM_ACTION + " " + song
         self.send_message(to_send)
-        self.play()
+        msg = self.play()
+        if msg == INVALID_REQ:
+            q.put(INVALID_REQ)
         self.song_playing = False
 
     def login(self, username, password):
