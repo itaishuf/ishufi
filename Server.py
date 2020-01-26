@@ -104,6 +104,8 @@ class Server(object):
                 self.choose_action(client_req[0], client_req[1:])
         except socket.error as e:
             print(e)
+            print("here")
+            self.handle_client()
 
 
 def format_msg(msg):

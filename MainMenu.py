@@ -5,8 +5,9 @@ import MainApp
 import WindowManager
 import AddUserScreen
 import tkinter.messagebox
-
-
+GREEN = "#aaffa0"
+FAINT_GREEN = "#c1ffba"
+PURPLE = "#8A23F1"
 class Window(tk.Frame):
 
     def __init__(self, master, manager):
@@ -20,31 +21,34 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
-        self.master.title("ishufi")
+        self.master.title("Ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        quit_button = tk.Button(self, text="Quit", command=self.manager_close_frame)
+        frame = tk.Frame(master=self, bg=GREEN)
+        frame.pack(fill=tk.BOTH, expand =1)
+
+        quit_button = tk.Button(self, text="Quit", command=self.manager_close_frame, font=tk.font.Font(family="gisha", size="10"), bg=FAINT_GREEN)
         quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
-        continue_button = tk.Button(self, text="Continue", command=self.check_user)
+        continue_button = tk.Button(self, text="Log In", command=self.check_user, font=tk.font.Font(family="gisha", size="10"), bg=FAINT_GREEN)
         continue_button.place(relx=0.4, rely=0.65, relwidth=0.2)
 
-        add_user_button = tk.Button(self, text="Register", command=self.add_user)
+        add_user_button = tk.Button(self, text="Register", command=self.add_user, font=tk.font.Font(family="gisha", size="10"), bg=FAINT_GREEN)
         add_user_button.place(relx=0.4, rely=0.55, relwidth=0.2)
 
-        username_txt = tk.Label(self, text="Username")
+        username_txt = tk.Label(self, text="Username", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         username_txt.place(relx=0.3, rely=0.18, relwidth=0.4)
 
-        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg="#8A23F1")
+        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg=PURPLE, bg=GREEN)
         sign_in_txt.place(relx=0.3, rely=0.01, relwidth=0.4)
 
-        self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))
+        self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=FAINT_GREEN)
         self.username_entry.place(relx=0.3, rely=0.25, relwidth=0.4)
 
-        password_txt = tk.Label(self, text="Password")
+        password_txt = tk.Label(self, text="Password", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         password_txt.place(relx=0.3, rely=0.33, relwidth=0.4)
 
-        self.password_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), show='$')
+        self.password_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), show='$', bg=FAINT_GREEN)
         self.password_entry.place(relx=0.3, rely=0.4, relwidth=0.4)
         self.password_entry.bind('<Return>', self.get_text)
 
@@ -84,10 +88,7 @@ class Window(tk.Frame):
 
 
 def main():
-    root = tk.Tk()
-    root.geometry("400x300")
-    app = Window(root)
-    root.mainloop()
+    pass
 
 
 if __name__ == '__main__':
