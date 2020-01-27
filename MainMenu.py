@@ -5,8 +5,8 @@ import MainApp
 import WindowManager
 import AddUserScreen
 import tkinter.messagebox
-GREEN = "#aaffa0"
-FAINT_GREEN = "#c1ffba"
+GREEN = "#ccffea"
+FAINT_GREEN = "#ffffff"
 PURPLE = "#8A23F1"
 class Window(tk.Frame):
 
@@ -60,7 +60,6 @@ class Window(tk.Frame):
     def add_user(self):
         username, password = self.get_text(None)
         can_login, msg = self.client.add_user(username, password)
-        print(can_login, msg)
         if can_login:
             tk.messagebox.showinfo("Ishufi", msg)
             self.switch_window(MainApp.Window)

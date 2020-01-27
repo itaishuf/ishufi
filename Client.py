@@ -41,7 +41,6 @@ class Client(object):
                 new_data, server_address = self.receive_msg()
             end = time.time()
             my_time = end-start
-            print(my_time)
             return str(my_time)
         except socket.error as e:
             print(e)

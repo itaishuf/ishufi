@@ -7,7 +7,9 @@ import queue
 import time
 INVALID_REQ = "invalid"
 DONE = "done"
-
+BLUE = "#ccffea"
+LIGHT_BLUE = "#ffffff"
+PURPLE = "#8A23F1"
 class Window(tk.Frame):
 
     def __init__(self, master, manager):
@@ -23,13 +25,19 @@ class Window(tk.Frame):
         self.master.title("ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit)
+        frame = tk.Frame(master=self, bg=BLUE)
+        frame.pack(fill=tk.BOTH, expand =1)
+
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=BLUE)
         quit_button.place(x=180, y=250)
 
-        play_button = tk.Button(self, text="Play", command=self.pick_song)
+        play_button = tk.Button(self, text="Play", command=self.pick_song, bg=BLUE)
         play_button.place(x=180, y=200)
 
-        self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'))
+        search_txt = tk.Label(self, text="Search", font=tk.font.Font(family="tahoma", size="18", weight="bold"), bg=BLUE, fg=PURPLE)
+        search_txt.place(relx=0.3, rely=0.21, relwidth=0.4)
+
+        self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
         self.search_box.place(x=100, y=100)
         self.search_box.bind('<Return>', self.get_text)
 

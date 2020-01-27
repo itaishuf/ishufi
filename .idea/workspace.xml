@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6da26ce9-879b-4b49-9da8-ec46c5f4a54a" name="Default Changelist" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Client.py" afterPath="$PROJECT_DIR$/Client.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MainApp.py" afterPath="$PROJECT_DIR$/MainApp.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MainMenu.py" afterPath="$PROJECT_DIR$/MainMenu.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server.py" afterPath="$PROJECT_DIR$/Server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testing/test.py" afterPath="$PROJECT_DIR$/testing/test.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="TRACKING_ENABLED" value="true" />
@@ -25,10 +28,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MainMenu.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="MainMenu.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MainMenu.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="28" selection-start="557" selection-end="557" vertical-scroll-proportion="-0.2635135" vertical-offset="508" max-vertical-offset="1717">
+            <state line="61" column="65" selection-start="2657" selection-end="2657" vertical-scroll-proportion="0.0" vertical-offset="867" max-vertical-offset="1700">
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -39,7 +42,7 @@
       <file leaf-file-name="WindowManager.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WindowManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="31" selection-start="433" selection-end="433" vertical-scroll-proportion="0.0" vertical-offset="202" max-vertical-offset="646">
+            <state line="10" column="22" selection-start="165" selection-end="165" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
               <folding />
             </state>
           </provider>
@@ -48,7 +51,7 @@
       <file leaf-file-name="MainApp.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MainApp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="22" selection-start="1339" selection-end="1339" vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="1224">
+            <state line="36" column="48" selection-start="993" selection-end="993" vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="1360">
               <folding />
             </state>
           </provider>
@@ -57,17 +60,19 @@
       <file leaf-file-name="Client.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="12" selection-start="571" selection-end="571" vertical-scroll-proportion="0.0" vertical-offset="1511" max-vertical-offset="2108">
+            <state line="56" column="25" selection-start="1576" selection-end="1576" vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="2091">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database.py">
+      <file leaf-file-name="test.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/testing/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="46" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0" vertical-offset="746" max-vertical-offset="1343">
-              <folding />
+            <state line="10" column="33" selection-start="286" selection-end="286" vertical-scroll-proportion="0.3828829" vertical-offset="0" max-vertical-offset="444">
+              <folding>
+                <element signature="e#24#45#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -75,17 +80,21 @@
       <file leaf-file-name="Server.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="14" selection-start="1705" selection-end="1705" vertical-scroll-proportion="0.0" vertical-offset="763" max-vertical-offset="2210">
-              <folding />
+            <state line="103" column="20" selection-start="3190" selection-end="3190" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2176">
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/testing/test.py">
+      <file leaf-file-name="database.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-              <folding />
+            <state line="5" column="0" selection-start="80" selection-end="80" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
+              <folding>
+                <element signature="e#24#38#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -125,14 +134,14 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/testing/test.py" />
         <option value="$PROJECT_DIR$/database.py" />
-        <option value="$PROJECT_DIR$/MainApp.py" />
         <option value="$PROJECT_DIR$/AddUserScreen.py" />
-        <option value="$PROJECT_DIR$/Client.py" />
         <option value="$PROJECT_DIR$/WindowManager.py" />
-        <option value="$PROJECT_DIR$/MainMenu.py" />
+        <option value="$PROJECT_DIR$/MainApp.py" />
         <option value="$PROJECT_DIR$/Server.py" />
+        <option value="$PROJECT_DIR$/MainMenu.py" />
+        <option value="$PROJECT_DIR$/Client.py" />
+        <option value="$PROJECT_DIR$/testing/test.py" />
       </list>
     </option>
   </component>
@@ -212,6 +221,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -230,7 +240,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.WindowManager">
+  <component name="RunManager" selected="Python.test">
     <configuration default="false" name="MainMenu" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -447,9 +457,9 @@
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python.WindowManager" />
-        <item index="1" class="java.lang.String" itemvalue="Python.Server" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test" />
+        <item index="0" class="java.lang.String" itemvalue="Python.test" />
+        <item index="1" class="java.lang.String" itemvalue="Python.WindowManager" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Server" />
       </list>
     </recent_temporary>
   </component>
@@ -482,7 +492,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33512065" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13672496" sideWeight="0.5182292" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.118393235" sideWeight="0.48177084" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.12544045" sideWeight="0.48177084" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960254" sideWeight="0.5013123" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -514,6 +524,15 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/testing/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MainMenu.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="37" column="96" selection-start="1208" selection-end="1208" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1700">
@@ -547,21 +566,27 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="46" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="1377">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="67" column="18" selection-start="1821" selection-end="1821" vertical-scroll-proportion="0.0" vertical-offset="1139" max-vertical-offset="2176">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testing/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <folding />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -603,21 +628,27 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="9" column="46" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="1377">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="24" selection-start="95" selection-end="95" vertical-scroll-proportion="0.0" vertical-offset="85" max-vertical-offset="2057">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testing/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <folding />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -652,21 +683,27 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="23" selection-start="130" selection-end="130" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="1377">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="45" column="34" selection-start="1203" selection-end="1203" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="2074">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testing/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
-          <folding />
+          <folding>
+            <element signature="e#24#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -701,14 +738,18 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="48" column="0" selection-start="1549" selection-end="1549" vertical-scroll-proportion="0.0" vertical-offset="816" max-vertical-offset="1343">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="78" column="62" selection-start="2524" selection-end="2524" vertical-scroll-proportion="0.0" vertical-offset="1326" max-vertical-offset="1887">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -743,14 +784,18 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="66" selection-start="172" selection-end="172" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="1343">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="38" column="30" selection-start="1015" selection-end="1015" vertical-scroll-proportion="0.0" vertical-offset="595" max-vertical-offset="1717">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -780,14 +825,18 @@
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
-          <folding />
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1683">
-          <folding />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -797,65 +846,71 @@
         <state line="864" column="0" selection-start="30112" selection-end="30112" vertical-scroll-proportion="0.0" vertical-offset="14376" max-vertical-offset="22882" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AddUserScreen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="1" selection-start="1696" selection-end="1696" vertical-scroll-proportion="0.32210526" vertical-offset="595" max-vertical-offset="1445" />
-      </provider>
-    </entry>
     <entry file="file://C:/Python37-32/Lib/tkinter/font.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4029">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4029" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testing/test.py">
+    <entry file="file://$PROJECT_DIR$/AddUserScreen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
+        <state line="44" column="1" selection-start="1696" selection-end="1696" vertical-scroll-proportion="0.0" vertical-offset="595" max-vertical-offset="1445">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="46" selection-start="226" selection-end="226" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="1377">
-          <folding />
+        <state line="5" column="0" selection-start="80" selection-end="80" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1377">
+          <folding>
+            <element signature="e#24#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Client.py">
+    <entry file="file://$PROJECT_DIR$/Server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="12" selection-start="571" selection-end="571" vertical-scroll-proportion="0.0" vertical-offset="572" max-vertical-offset="2108">
-          <folding />
+        <state line="103" column="20" selection-start="3190" selection-end="3190" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2176">
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MainMenu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="65" selection-start="2657" selection-end="2657" vertical-scroll-proportion="0.0" vertical-offset="867" max-vertical-offset="1700">
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WindowManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="31" selection-start="433" selection-end="433" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
+        <state line="10" column="22" selection-start="165" selection-end="165" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="646">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MainApp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="22" selection-start="1339" selection-end="1339" vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="1224">
+        <state line="36" column="48" selection-start="993" selection-end="993" vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="1360">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server.py">
+    <entry file="file://$PROJECT_DIR$/Client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="14" selection-start="1705" selection-end="1705" vertical-scroll-proportion="0.0" vertical-offset="763" max-vertical-offset="2210">
+        <state line="56" column="25" selection-start="1576" selection-end="1576" vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="2091">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MainMenu.py">
+    <entry file="file://$PROJECT_DIR$/testing/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="28" selection-start="557" selection-end="557" vertical-scroll-proportion="-0.2635135" vertical-offset="508" max-vertical-offset="1717">
+        <state line="10" column="33" selection-start="286" selection-end="286" vertical-scroll-proportion="0.3828829" vertical-offset="0" max-vertical-offset="444">
           <folding>
-            <element signature="e#0#20#0" expanded="true" />
+            <element signature="e#24#45#0" expanded="true" />
           </folding>
         </state>
       </provider>

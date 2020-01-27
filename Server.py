@@ -55,7 +55,6 @@ class Server(object):
         path += '\songs\\'
         path += name[0]
         path += ".wav"
-        print (path)
         if os.path.exists(path):
             return path
         else:
@@ -89,7 +88,6 @@ class Server(object):
         data = data.decode()
         data = data.split()
         self.client_address = client_address
-        print(data)
         return data
 
     def send_message(self, data):
@@ -104,7 +102,6 @@ class Server(object):
                 self.choose_action(client_req[0], client_req[1:])
         except socket.error as e:
             print(e)
-            print("here")
             self.handle_client()
 
 
