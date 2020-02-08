@@ -1,10 +1,13 @@
 import socket
 import sys
-#import miniaudio
 import time
 import database
 from pathlib import Path
 import os
+import wave
+import scipy.io.wavfile as sio
+import YoutubeDownloader
+
 MSG_SIZE = 8000
 SAMPLE_RATE = 48000
 NO_LAG_MOD = 0.24095
@@ -19,10 +22,13 @@ EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
 ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
+SUCCESS = "Success"
+DOWNLOAD_ACTION = "DOWNLOAD"
 REQ_AND_PARAMS = {STREAM_ACTION: 1,
-                 LOGIN_ACTION: 2,
-                 EXIT_ACTION: 1,
-                 ADD_ACTION: 2}
+                  LOGIN_ACTION: 2,
+                  EXIT_ACTION: 1,
+                  ADD_ACTION: 2,
+                  DOWNLOAD_ACTION: 1}
 
 
 class Server(object):
@@ -49,19 +55,37 @@ class Server(object):
             self.login_check(params[0], params[1])
         elif action == ADD_ACTION:
             self.add_check(params[0], params[1])
+        elif action == DOWNLOAD_ACTION:
+            self.download_song(params[0])
 
     def choose_song(self, name):
         path = str(Path.cwd())
         path += '\songs\\'
-        path += name[0]
+        path += name
         path += ".wav"
         if os.path.exists(path):
-            return path
+            return "already exists"
         else:
-            return ""
+            return path
+
+    def get_metadata(self, name):
+        my_path = str(Path.cwd())
+        my_path += '\songs\\'
+        my_path += name
+        my_path += ".wav"
+        print('my path: ', my_path)
+        bit_rate, data = sio.read(my_path)
+        channels = 2
+        print("here")
+        print(bit_rate, channels)
+
+    def download_song(self, song):
+        msg = YoutubeDownloader.download_song(song)
+        self.send_message(msg)
+        self.get_metadata(song)
 
     def stream_song(self, path):
-        #print(miniaudio.get_file_info(path))
+        # print(miniaudio.get_file_info(path))
         if path == "":
             self.send_message(INVALID_REQ)
             return
@@ -76,17 +100,17 @@ class Server(object):
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
-        self.send_message(str(can_login) + " " + msg)
+        self.send_message(str(can_login) + "$" + msg)
 
     def add_check(self, username, password):
         can_login, msg = self.db.add_user(username, password)
-        self.send_message(str(can_login) + " " + msg)
+        self.send_message(str(can_login) + "$" + msg)
 
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
         data, client_address = self.server_socket.recvfrom(int(size))
         data = data.decode()
-        data = data.split()
+        data = data.split("$")
         self.client_address = client_address
         return data
 

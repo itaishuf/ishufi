@@ -27,7 +27,6 @@ class WindowManager(object):
         self.active_frame_class.exit_window(self.active_frame)
 
 
-
 def main():
     wm = WindowManager()
 

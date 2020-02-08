@@ -26,23 +26,29 @@ class Window(tk.Frame):
         self.pack(fill=tk.BOTH, expand=1)
 
         frame = tk.Frame(master=self, bg=BLUE)
-        frame.pack(fill=tk.BOTH, expand =1)
+        frame.pack(fill=tk.BOTH, expand=1)
 
-        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=BLUE)
-        quit_button.place(x=180, y=250)
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=LIGHT_BLUE)
+        quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
-        play_button = tk.Button(self, text="Play", command=self.pick_song, bg=BLUE)
-        play_button.place(x=180, y=200)
+        download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=LIGHT_BLUE)
+        download_button.place(relx=0.4, rely=0.65, relwidth=0.2)
+
+        play_button = tk.Button(self, text="Play", command=self.pick_song, bg=LIGHT_BLUE)
+        play_button.place(relx=0.4, rely=0.55, relwidth=0.2)
 
         search_txt = tk.Label(self, text="Search", font=tk.font.Font(family="tahoma", size="18", weight="bold"), bg=BLUE, fg=PURPLE)
-        search_txt.place(relx=0.3, rely=0.21, relwidth=0.4)
+        search_txt.place(relx=0.3, rely=0.15, relwidth=0.4)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
-        self.search_box.place(x=100, y=100)
+        self.search_box.place(relx=0.3, rely=0.25, relwidth=0.4)
         self.search_box.bind('<Return>', self.get_text)
 
     def get_text(self, event):
         return self.search_box.get()
+
+    def download_new_song(self):
+        self.client.download_song(self.get_text(None))
 
     def pick_song(self):
         name = self.get_text(None)
