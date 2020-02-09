@@ -4,14 +4,13 @@ import pyaudio
 import time
 
 MSG_SIZE = 8000
-SAMPLE_RATE = 48000
-CHANNELS = 2
 NO_LAG_MOD = 0.1
 IP = "127.0.0.1"
 PORT = 8821
 STREAM_ACTION = "STREAM"
 EXIT_ACTION = "EXIT"
 LOGIN_ACTION = "LOGIN"
+ERROR = "ERROR"
 ADD_ACTION = "ADD"
 INVALID_REQ = "invalid"
 SUCCESS = "Success"
@@ -29,12 +28,17 @@ class Client(object):
 
     def play(self):
         try:
+            metadata, server_address = self.receive_msg_not_song()
+            print("metadata", metadata)
+            metadata = metadata.split(' ')
+            sample_rate = int(metadata[0])
+            channels = int(metadata[1])
             new_data, server_address = self.receive_msg()
             self.server_address = server_address
             if new_data == INVALID_REQ.encode():
                 return INVALID_REQ
             p = pyaudio.PyAudio()
-            stream = p.open(format=pyaudio.paInt16, channels=CHANNELS, rate=SAMPLE_RATE,
+            stream = p.open(format=pyaudio.paInt16, channels=channels, rate=sample_rate,
                             output=True, frames_per_buffer=4000)
             start = time.time()
             while new_data != FINISH:
@@ -55,6 +59,8 @@ class Client(object):
             return False, "didn't enter song"
         elif data == SUCCESS:
             return True, SUCCESS
+        elif data == ERROR:
+            return False, ERROR
 
     def play_song(self, lst):
         song = lst[0]
@@ -88,7 +94,7 @@ class Client(object):
         data = data.decode()
         if data == INVALID_REQ:
             return False, "didn't enter username or password"
-        data = data.split()
+        data = data.split('$')
         can_login = eval(data[0])
         msg = " ".join(data[1:])
         return can_login, msg
@@ -120,7 +126,6 @@ class Client(object):
         except OSError as e:
             print(e)
             return FINISH, None
-
 
     def close_com(self):
         self.my_socket.close()

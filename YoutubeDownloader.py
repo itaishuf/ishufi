@@ -3,12 +3,14 @@ import urllib.request
 import urllib.parse
 import re
 import youtube_dl
-import os
+from tinytag import TinyTag
 import time
-import wave
+import os
+import subprocess
 from pathlib import Path
 DONE = "done"
 ERROR = "ERROR"
+SUCCESS = "Success"
 
 
 def urlib(name):
@@ -26,49 +28,49 @@ def urlib(name):
 
 
 def dl(url, name):
-    filename = str(Path.cwd()) + "\\" + name + ".wav"
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'noplaylist': True,
-        'ffmpeg_location': 'C:\FFmpeg\\bin',
-        'outtmpl': filename,
-        'postprocessors': [{
-
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'wav',
-        }],
-    }
+    filename = str(Path.cwd()) + "\\" + name + '.mp4'
+    print(filename)
+    ydl_opts = {"outtmpl": filename}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
 
-def move_to_dir(name):
-    time.sleep(0.1)
-    path = str(Path.cwd())
-    path += '\songs\\'
-    path += name
-    path += ".wav"
-    if os.path.exists(path):
-        return "already exists"
-    else:
-        os.replace((str(Path.cwd())+'\\'+name+".wav"), path)
+def move_to_dir(name, bit_rate, sample_rate, channels):
+    command = r"c:\ffmpeg\bin\ffmpeg.exe -i C:/ishufi/%s.mp4 -ab %s -ac %s -ar %s -vn songs/%s.wav" % \
+              (name, bit_rate, channels, sample_rate, name)
+    print(command)
+    print(name)
+    subprocess.call(command, shell=True)
+    time.sleep(0.2)
+    os.remove(r"c:/ishufi/%s.mp4" % name)
+
+
+def get_metadata(name):
+    filename = str(Path.cwd()) + "\\" + name + '.mp4'
+    tag = TinyTag.get(filename)
+    bit_rate = tag.bitrate
+    sample_rate = tag.samplerate
+    channels = tag.channels
+    return bit_rate, sample_rate, channels
 
 
 def download_song(name):
     try:
+        name = name.replace(' ', '_')
         url = urlib(name)
         dl(url[0], name)
-        move_to_dir(name)
-        return DONE
+        bit_rate, sample_rate, channels = get_metadata(name)
+        move_to_dir(name, bit_rate, sample_rate, channels)
+        return SUCCESS
     except Exception as msg:
         print(msg)
         return ERROR
 
 
-
 def main():
     my_str = "clash royale"
     download_song(my_str)
+
 
 if __name__ == '__main__':
     main()

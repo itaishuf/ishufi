@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
 import scipy.io.wavfile as sio
-from pathlib import Path
-
-
-def get_metadata():
-    my_path = "F:\project\ishufi\\testing\\dont kill my vibe kendrick lamar.wav"
-    print('my path: ', my_path)
-    bit_rate, data = sio.read(my_path)
-    channels = 2
-    print("here")
-    print(bit_rate, channels)
+from tinytag import TinyTag
 
 
 def main():
-    get_metadata()
-
+    my_path = r'c:\ishufi\whiplash_hank_levy.mp4'
+    tag = TinyTag.get(my_path)
+    print(tag.samplerate, tag.bitrate)
 
 if __name__ == '__main__':
     main()

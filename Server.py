@@ -4,12 +4,11 @@ import time
 import database
 from pathlib import Path
 import os
-import wave
+from tinytag import TinyTag
 import scipy.io.wavfile as sio
 import YoutubeDownloader
 
-MSG_SIZE = 8000
-SAMPLE_RATE = 48000
+MSG_SIZE = 7000
 NO_LAG_MOD = 0.24095
 HEADER_SIZE = 5
 IP = "127.0.0.1"
@@ -49,7 +48,7 @@ class Server(object):
             self.send_message(INVALID_REQ)
             return
         if action == STREAM_ACTION:
-            path = self.choose_song(params)
+            path = self.choose_song(params[0])
             self.stream_song(path)
         elif action == LOGIN_ACTION:
             self.login_check(params[0], params[1])
@@ -64,38 +63,37 @@ class Server(object):
         path += name
         path += ".wav"
         if os.path.exists(path):
-            return "already exists"
-        else:
             return path
+        else:
+            return "doesnt exist"
 
-    def get_metadata(self, name):
-        my_path = str(Path.cwd())
-        my_path += '\songs\\'
-        my_path += name
-        my_path += ".wav"
+    def get_metadata(self, my_path):
         print('my path: ', my_path)
-        bit_rate, data = sio.read(my_path)
-        channels = 2
-        print("here")
-        print(bit_rate, channels)
+        tag = TinyTag.get(my_path)
+        sample_rate = tag.samplerate
+        channels = tag.channels
+        metadata = (str(sample_rate), str(channels))
+        return metadata
 
     def download_song(self, song):
         msg = YoutubeDownloader.download_song(song)
         self.send_message(msg)
-        self.get_metadata(song)
 
     def stream_song(self, path):
         # print(miniaudio.get_file_info(path))
         if path == "":
             self.send_message(INVALID_REQ)
             return
+        sample_rate, channels = self.get_metadata(path)
+        to_send = sample_rate + "$" + channels
+        self.send_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
             self.send_message(data)
             while data != EMPTY_MSG:
                 data = song.read(MSG_SIZE)
                 self.send_message(data)
-                time.sleep(MSG_SIZE * NO_LAG_MOD/SAMPLE_RATE)
+                time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_message(FINISH)
 
     def login_check(self, username, password):
@@ -133,7 +131,7 @@ def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(HEADER_SIZE)
     if type(msg) == str:
-        msg= msg.encode()
+        msg = msg.encode()
     return header.encode(), msg
 
 

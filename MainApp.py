@@ -45,10 +45,12 @@ class Window(tk.Frame):
         self.search_box.bind('<Return>', self.get_text)
 
     def get_text(self, event):
-        return self.search_box.get()
+        return self.search_box.get().replace(' ', '_')
 
     def download_new_song(self):
-        self.client.download_song(self.get_text(None))
+        success, msg = self.client.download_song(self.get_text(None))
+        print(success, msg)
+        tk.messagebox.showinfo("Ishufi", msg)
 
     def pick_song(self):
         name = self.get_text(None)
@@ -63,7 +65,6 @@ class Window(tk.Frame):
             return
         if return_queue.get() == INVALID_REQ:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
-
 
     def call_manager_exit(self):
         self.client.close_com()
