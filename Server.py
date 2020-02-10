@@ -4,9 +4,8 @@ import time
 import database
 from pathlib import Path
 import os
-from tinytag import TinyTag
-import scipy.io.wavfile as sio
-import YoutubeDownloader
+import wave
+from YoutubeDownloader import YoutubeDownloader
 
 MSG_SIZE = 7000
 NO_LAG_MOD = 0.24095
@@ -58,25 +57,22 @@ class Server(object):
             self.download_song(params[0])
 
     def choose_song(self, name):
-        path = str(Path.cwd())
-        path += '\songs\\'
-        path += name
-        path += ".wav"
+        path = str(Path.cwd()) + r'\songs\%s.wav' % name
         if os.path.exists(path):
             return path
         else:
             return "doesnt exist"
 
     def get_metadata(self, my_path):
-        print('my path: ', my_path)
-        tag = TinyTag.get(my_path)
-        sample_rate = tag.samplerate
-        channels = tag.channels
-        metadata = (str(sample_rate), str(channels))
-        return metadata
+        with wave.open(my_path, "rb") as wave_file:
+            frame_rate = wave_file.getframerate()
+            channels = wave_file.getnchannels()
+        print(frame_rate, channels)
+        return str(frame_rate), str(channels)
 
     def download_song(self, song):
-        msg = YoutubeDownloader.download_song(song)
+        downloader = YoutubeDownloader(song)
+        msg = downloader.download()
         self.send_message(msg)
 
     def stream_song(self, path):
