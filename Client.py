@@ -2,21 +2,7 @@
 import socket
 import pyaudio
 import time
-
-MSG_SIZE = 8000
-NO_LAG_MOD = 0.1
-IP = "127.0.0.1"
-PORT = 8821
-STREAM_ACTION = "STREAM"
-EXIT_ACTION = "EXIT"
-LOGIN_ACTION = "LOGIN"
-ERROR = "ERROR"
-ADD_ACTION = "ADD"
-INVALID_REQ = "invalid"
-SUCCESS = "Success"
-DONE = "done"
-DOWNLOAD_ACTION = "DOWNLOAD"
-FINISH = b"finish"
+from Consts import *
 
 
 class Client(object):
@@ -33,13 +19,14 @@ class Client(object):
             metadata = metadata.split(' ')
             sample_rate = int(metadata[0])
             channels = int(metadata[1])
+            my_format = int(metadata[2])
             new_data, server_address = self.receive_msg()
             self.server_address = server_address
             if new_data == INVALID_REQ.encode():
                 return INVALID_REQ
             p = pyaudio.PyAudio()
-            stream = p.open(format=pyaudio.paInt16, channels=channels, rate=sample_rate,
-                            output=True, frames_per_buffer=4000)
+            stream = p.open(format=my_format, channels=channels, rate=sample_rate,
+                            output=True, frames_per_buffer=4096)
             start = time.time()
             while new_data != FINISH:
                 if new_data is not None:
@@ -71,7 +58,6 @@ class Client(object):
         to_send = STREAM_ACTION + "$" + song
         self.send_message(to_send)
         msg = self.play()
-        print(msg)
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
         self.song_playing = False
@@ -121,7 +107,6 @@ class Client(object):
             data = data.decode()
             data = data.split('$')
             data = " ".join(data)
-            print(data)
             return data, server_address
         except OSError as e:
             print(e)

@@ -5,11 +5,9 @@ import Client
 import threading
 import queue
 import time
-INVALID_REQ = "invalid"
-DONE = "done"
-BLUE = "#ccffea"
-LIGHT_BLUE = "#ffffff"
-PURPLE = "#8A23F1"
+from Consts import *
+
+
 class Window(tk.Frame):
 
     def __init__(self, master, manager):
@@ -71,7 +69,6 @@ class Window(tk.Frame):
         self.manager.close_frame()
 
     def exit_window(self):
-        print("quit")
         self.destroy()
         self.quit()
 

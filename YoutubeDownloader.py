@@ -3,20 +3,17 @@ import urllib.request
 import urllib.parse
 import re
 import wave
-from tinytag import TinyTag
 import os
 import subprocess
-DONE = "done"
-ERROR = "ERROR"
-SUCCESS = "Success"
+from Consts import *
 
 
 class YoutubeDownloader(object):
     def __init__(self, name):
         self.name = name.replace(' ', '_')
-        self.old_path = r'c:\ishufi\%s.mp4' % self.name
-        self.temp_path = r'c:\ishufi\songs\%s.mp4' % self.name
-        self.new_path = r'c:\ishufi\songs\%s.wav' % self.name
+        self.old_path = r'c:\branch\ishufi\%s.mp4' % self.name
+        self.temp_path = r'c:\branch\ishufi\songs\%s.mp4' % self.name
+        self.new_path = r'c:\branch\ishufi\songs\%s.wav' % self.name
 
     def ur_lib(self):
         query_string = urllib.parse.urlencode({"search_query": self.name})
@@ -39,15 +36,9 @@ class YoutubeDownloader(object):
     def move_to_dir(self):
         print("moving")
         os.rename(self.old_path, self.temp_path)
-        command = r'ffmpeg -i %s c:\ishufi\songs\%s.wav' % (self.temp_path, self.name)
+        command = r'ffmpeg -i %s c:\branch\ishufi\songs\%s.wav' % (self.temp_path, self.name)
         subprocess.call(command)
         os.remove(self.temp_path)
-
-    def get_metadata(self):
-        with wave.open(self.new_path, "rb") as wave_file:
-            frame_rate = wave_file.getframerate()
-            channels = wave_file.getnchannels()
-        print(frame_rate)
 
     def download(self):
         try:
@@ -61,8 +52,7 @@ class YoutubeDownloader(object):
 
 
 def main():
-    downloader = YoutubeDownloader('r u mine')
-    downloader.get_metadata()
+    pass
 
 
 if __name__ == '__main__':

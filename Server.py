@@ -4,29 +4,10 @@ import time
 import database
 from pathlib import Path
 import os
+import pyaudio
 import wave
 from YoutubeDownloader import YoutubeDownloader
-
-MSG_SIZE = 7000
-NO_LAG_MOD = 0.24095
-HEADER_SIZE = 5
-IP = "127.0.0.1"
-PORT = 8821
-PATH = r"C:\ishufi\songs\abc.wav"
-FINISH = b"finish"
-EMPTY_MSG = b''
-STREAM_ACTION = "STREAM"
-EXIT_ACTION = "EXIT"
-LOGIN_ACTION = "LOGIN"
-ADD_ACTION = "ADD"
-INVALID_REQ = "invalid"
-SUCCESS = "Success"
-DOWNLOAD_ACTION = "DOWNLOAD"
-REQ_AND_PARAMS = {STREAM_ACTION: 1,
-                  LOGIN_ACTION: 2,
-                  EXIT_ACTION: 1,
-                  ADD_ACTION: 2,
-                  DOWNLOAD_ACTION: 1}
+from Consts import *
 
 
 class Server(object):
@@ -67,8 +48,9 @@ class Server(object):
         with wave.open(my_path, "rb") as wave_file:
             frame_rate = wave_file.getframerate()
             channels = wave_file.getnchannels()
-        print(frame_rate, channels)
-        return str(frame_rate), str(channels)
+            my_format = pyaudio.get_format_from_width(wave_file.getsampwidth())
+        print(frame_rate, channels, my_format)
+        return str(frame_rate), str(channels), str(my_format)
 
     def download_song(self, song):
         downloader = YoutubeDownloader(song)
@@ -80,8 +62,8 @@ class Server(object):
         if path == "":
             self.send_message(INVALID_REQ)
             return
-        sample_rate, channels = self.get_metadata(path)
-        to_send = sample_rate + "$" + channels
+        sample_rate, channels, my_format = self.get_metadata(path)
+        to_send = sample_rate + "$" + channels + '$' + my_format
         self.send_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)

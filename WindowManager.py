@@ -2,7 +2,7 @@ import tkinter as tk
 import Client
 import MainApp
 import MainMenu
-import AddUserScreen
+from Consts import *
 
 
 class WindowManager(object):
@@ -23,7 +23,6 @@ class WindowManager(object):
         root.mainloop()
 
     def close_frame(self):
-        print(self.active_frame_class)
         self.active_frame_class.exit_window(self.active_frame)
 
 
