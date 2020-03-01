@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
-import scipy.io.wavfile as sio
-from tinytag import TinyTag
+import time
+import threading
+
+
+def foo(e):
+    while True:
+        e.wait()
+        print('un pause')
+        e.clear()
 
 
 def main():
-    my_path = r'c:\ishufi\whiplash_hank_levy.mp4'
-    tag = TinyTag.get(my_path)
-    print(tag.samplerate, tag.bitrate)
+    e = threading.Event()
+    t = threading.Thread(target=foo, args=(e,))
+    t.start()
+    while True:
+        time.sleep(3)
+        e.set()
+
+
 
 if __name__ == '__main__':
     main()

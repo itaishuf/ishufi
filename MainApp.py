@@ -35,12 +35,24 @@ class Window(tk.Frame):
         play_button = tk.Button(self, text="Play", command=self.pick_song, bg=LIGHT_BLUE)
         play_button.place(relx=0.4, rely=0.55, relwidth=0.2)
 
+        pause_button = tk.Button(self, text="Pause", command=self.pause, bg=LIGHT_BLUE)
+        pause_button.place(relx=0.7, rely=0.55, relwidth=0.15)
+
+        un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=LIGHT_BLUE)
+        un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
+
         search_txt = tk.Label(self, text="Search", font=tk.font.Font(family="tahoma", size="18", weight="bold"), bg=BLUE, fg=PURPLE)
         search_txt.place(relx=0.3, rely=0.15, relwidth=0.4)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
         self.search_box.place(relx=0.3, rely=0.25, relwidth=0.4)
         self.search_box.bind('<Return>', self.get_text)
+
+    def pause(self):
+        self.client.pause()
+
+    def un_pause(self):
+        self.client.un_pause()
 
     def get_text(self, event):
         return self.search_box.get().replace(' ', '_')

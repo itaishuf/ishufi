@@ -4,6 +4,7 @@ import time
 import database
 from pathlib import Path
 import os
+import queue
 import threading
 import pyaudio
 import wave
@@ -26,21 +27,29 @@ class Server(object):
         self.client_address = ()
         self.client_streaming_address = ()
         self.db = database.ConnectionDatabase()
+        self.pause = False
 
-    def choose_action(self, action, params):
+    def choose_action(self, action, params, event):
         if REQ_AND_PARAMS.get(action) != len(params):
             print("invalid request")
             self.send_message(INVALID_REQ)
             return
         if action == STREAM_ACTION:
             path = self.choose_song(params[0])
-            self.stream_song(path)
+            self.stream_song(path, event)
         elif action == LOGIN_ACTION:
             self.login_check(params[0], params[1])
         elif action == ADD_ACTION:
             self.add_check(params[0], params[1])
         elif action == DOWNLOAD_ACTION:
             self.download_song(params[0])
+        elif action == PAUSE_ACTION:
+            self.pause = True
+            event.clear()
+        elif action == UN_PAUSE_ACTION:
+            self.pause = False
+            print("setting")
+            event.set()
 
     def choose_song(self, name):
         path = str(Path.cwd()) + r'\songs\%s.wav' % name
@@ -62,8 +71,7 @@ class Server(object):
         msg = downloader.download()
         self.send_message(msg)
 
-    def stream_song(self, path):
-        # print(miniaudio.get_file_info(path))
+    def stream_song(self, path, e):
         if path == "":
             self.send_streaming_message(INVALID_REQ)
             return
@@ -76,6 +84,8 @@ class Server(object):
             self.send_streaming_message(data)
             while data != EMPTY_MSG:
                 data = song.read(MSG_SIZE)
+                if self.pause:
+                    e.wait()
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
@@ -83,7 +93,7 @@ class Server(object):
     # bytes/sec: (Sample Rate * BitsPerSample * Channels) / 8
     def get_byte_num(self, path):
         sample, channels, my_format = self.get_metadata(path)
-        return (int(sample) * int(my_format) * int(channels)) / 8
+        return (int(sample) * int(my_format) * int(channels)*10) / 8
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
@@ -123,24 +133,25 @@ class Server(object):
         self.server_socket.sendto(data, self.client_address)
 
     def handle_client(self):
-        reg_t = threading.Thread(target=self.handle_reg_client)
-        stream_t = threading.Thread(target=self.handle_stream_client)
+        e = threading.Event()
+        reg_t = threading.Thread(target=self.handle_reg_client, args=(e,))
+        stream_t = threading.Thread(target=self.handle_stream_client, args=(e,))
         reg_t.start()
         stream_t.start()
 
-    def handle_reg_client(self):
+    def handle_reg_client(self, event):
         try:
             while True:
                 client_req = self.receive_msg()
-                self.choose_action(client_req[0], client_req[1:])
+                self.choose_action(client_req[0], client_req[1:], event)
         except socket.error as e:
             print(e)
 
-    def handle_stream_client(self):
+    def handle_stream_client(self, event):
         try:
             while True:
                 client_req = self.receive_streaming_msg()
-                self.choose_action(client_req[0], client_req[1:])
+                self.choose_action(client_req[0], client_req[1:], event)
         except socket.error as e:
             print(e)
 
