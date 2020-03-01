@@ -28,6 +28,7 @@ class Server(object):
         self.client_streaming_address = ()
         self.db = database.ConnectionDatabase()
         self.pause = False
+        self.skip_q = queue.Queue()
 
     def choose_action(self, action, params, event):
         if REQ_AND_PARAMS.get(action) != len(params):
@@ -48,8 +49,9 @@ class Server(object):
             event.clear()
         elif action == UN_PAUSE_ACTION:
             self.pause = False
-            print("setting")
             event.set()
+        elif action == FORWARD_ACTION:
+            self.skip_q.put(FORWARD_ACTION)
 
     def choose_song(self, name):
         path = str(Path.cwd()) + r'\songs\%s.wav' % name
@@ -63,7 +65,7 @@ class Server(object):
             frame_rate = wave_file.getframerate()
             channels = wave_file.getnchannels()
             my_format = pyaudio.get_format_from_width(wave_file.getsampwidth())
-        print(frame_rate, channels, my_format)
+        # print(frame_rate, channels, my_format)
         return str(frame_rate), str(channels), str(my_format)
 
     def download_song(self, song):
@@ -77,7 +79,7 @@ class Server(object):
             return
         sample_rate, channels, my_format = self.get_metadata(path)
         to_send = sample_rate + "$" + channels + '$' + my_format
-        print(self.get_byte_num(path))
+        skip_amount = self.get_byte_num(path)
         self.send_streaming_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
@@ -86,6 +88,9 @@ class Server(object):
                 data = song.read(MSG_SIZE)
                 if self.pause:
                     e.wait()
+                if not self.skip_q.empty():
+                    self.skip_q.get()
+                    song.read(int(skip_amount))
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
@@ -93,7 +98,7 @@ class Server(object):
     # bytes/sec: (Sample Rate * BitsPerSample * Channels) / 8
     def get_byte_num(self, path):
         sample, channels, my_format = self.get_metadata(path)
-        return (int(sample) * int(my_format) * int(channels)*10) / 8
+        return (int(sample) * int(my_format) * int(channels)*15) / 8
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)

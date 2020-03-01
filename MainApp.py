@@ -41,12 +41,24 @@ class Window(tk.Frame):
         un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=LIGHT_BLUE)
         un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
 
+        forward_button = tk.Button(self, text="forward", command=self.forward, bg=LIGHT_BLUE)
+        forward_button.place(relx=0.78, rely=0.75, relwidth=0.15)
+
+        backward_button = tk.Button(self, text="backward", command=self.backward, bg=LIGHT_BLUE)
+        backward_button.place(relx=0.62, rely=0.75, relwidth=0.15)
+
         search_txt = tk.Label(self, text="Search", font=tk.font.Font(family="tahoma", size="18", weight="bold"), bg=BLUE, fg=PURPLE)
         search_txt.place(relx=0.3, rely=0.15, relwidth=0.4)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
         self.search_box.place(relx=0.3, rely=0.25, relwidth=0.4)
         self.search_box.bind('<Return>', self.get_text)
+
+    def forward(self):
+        self.client.forward()
+
+    def backward(self):
+        pass
 
     def pause(self):
         self.client.pause()

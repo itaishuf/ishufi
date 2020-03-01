@@ -13,6 +13,7 @@ LOGIN_ACTION = "LOGIN"
 ADD_ACTION = "ADD"
 PAUSE_ACTION = "PAUSE"
 UN_PAUSE_ACTION = 'UNPAUSE'
+FORWARD_ACTION = 'FORWARD'
 INVALID_REQ = "invalid"
 SUCCESS = "Success"
 DOWNLOAD_ACTION = "DOWNLOAD"
@@ -22,7 +23,8 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   ADD_ACTION: 2,
                   DOWNLOAD_ACTION: 1,
                   PAUSE_ACTION: 0,
-                  UN_PAUSE_ACTION:0}
+                  UN_PAUSE_ACTION: 0,
+                  FORWARD_ACTION: 0}
 
 DONE = "done"
 ERROR = "ERROR"

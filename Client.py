@@ -57,6 +57,9 @@ class Client(object):
     def un_pause(self):
         self.send_message(UN_PAUSE_ACTION)
 
+    def forward(self):
+        self.send_message(FORWARD_ACTION)
+
     def play_song(self, lst):
         song = lst[0]
         q = lst[1]
