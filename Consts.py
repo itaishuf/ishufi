@@ -1,9 +1,9 @@
 MSG_SIZE = 8192
-NO_LAG_MOD = 0.34095
+NO_LAG_MOD = 0.13095
 HEADER_SIZE = 5
 IP = "127.0.0.1"
 PORT = 8820
-STREAMING_PORT = 8824
+STREAM_PORT = 8824
 PATH = r"C:\ishufi\songs\abc.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''

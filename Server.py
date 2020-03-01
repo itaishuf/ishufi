@@ -4,6 +4,7 @@ import time
 import database
 from pathlib import Path
 import os
+import threading
 import pyaudio
 import wave
 from YoutubeDownloader import YoutubeDownloader
@@ -11,15 +12,19 @@ from Consts import *
 
 
 class Server(object):
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, stream_port):
         try:
+            server_socket_streaming = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            server_socket_streaming.bind((ip, stream_port))
             server_socket.bind((ip, port))
         except socket.error as e:
             print(e)
             sys.exit(1)
+        self.server_socket_streaming = server_socket_streaming
         self.server_socket = server_socket
         self.client_address = ()
+        self.client_streaming_address = ()
         self.db = database.ConnectionDatabase()
 
     def choose_action(self, action, params):
@@ -60,19 +65,25 @@ class Server(object):
     def stream_song(self, path):
         # print(miniaudio.get_file_info(path))
         if path == "":
-            self.send_message(INVALID_REQ)
+            self.send_streaming_message(INVALID_REQ)
             return
         sample_rate, channels, my_format = self.get_metadata(path)
         to_send = sample_rate + "$" + channels + '$' + my_format
-        self.send_message(to_send)
+        print(self.get_byte_num(path))
+        self.send_streaming_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
-            self.send_message(data)
+            self.send_streaming_message(data)
             while data != EMPTY_MSG:
                 data = song.read(MSG_SIZE)
-                self.send_message(data)
+                self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
-            self.send_message(FINISH)
+            self.send_streaming_message(FINISH)
+
+    # bytes/sec: (Sample Rate * BitsPerSample * Channels) / 8
+    def get_byte_num(self, path):
+        sample, channels, my_format = self.get_metadata(path)
+        return (int(sample) * int(my_format) * int(channels)) / 8
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
@@ -82,9 +93,24 @@ class Server(object):
         can_login, msg = self.db.add_user(username, password)
         self.send_message(str(can_login) + "$" + msg)
 
+    def receive_streaming_msg(self):
+        size, client_streaming_address = self.server_socket_streaming.recvfrom(HEADER_SIZE)
+        data, client_streaming_address = self.server_socket_streaming.recvfrom(int(size))
+        print('receive stream', data)
+        data = data.decode()
+        data = data.split("$")
+        self.client_streaming_address = client_streaming_address
+        return data
+
+    def send_streaming_message(self, data):
+        header, data = format_msg(data)
+        self.server_socket_streaming.sendto(header, self.client_streaming_address)
+        self.server_socket_streaming.sendto(data, self.client_streaming_address)
+
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
         data, client_address = self.server_socket.recvfrom(int(size))
+        print('rec', data)
         data = data.decode()
         data = data.split("$")
         self.client_address = client_address
@@ -92,17 +118,31 @@ class Server(object):
 
     def send_message(self, data):
         header, data = format_msg(data)
+        print('send msg', data)
         self.server_socket.sendto(header, self.client_address)
         self.server_socket.sendto(data, self.client_address)
 
     def handle_client(self):
+        reg_t = threading.Thread(target=self.handle_reg_client)
+        stream_t = threading.Thread(target=self.handle_stream_client)
+        reg_t.start()
+        stream_t.start()
+
+    def handle_reg_client(self):
         try:
             while True:
                 client_req = self.receive_msg()
                 self.choose_action(client_req[0], client_req[1:])
         except socket.error as e:
             print(e)
-            self.handle_client()
+
+    def handle_stream_client(self):
+        try:
+            while True:
+                client_req = self.receive_streaming_msg()
+                self.choose_action(client_req[0], client_req[1:])
+        except socket.error as e:
+            print(e)
 
 
 def format_msg(msg):
@@ -114,7 +154,7 @@ def format_msg(msg):
 
 
 def main():
-    server = Server(IP, PORT)
+    server = Server(IP, PORT, STREAM_PORT)
     server.handle_client()
 
 
