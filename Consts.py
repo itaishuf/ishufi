@@ -17,6 +17,7 @@ FORWARD_ACTION = 'FORWARD'
 BACKWARD_ACTION = 'BACKWARD'
 INVALID_REQ = "invalid"
 SUCCESS = "Success"
+STOP = 'STOP'
 DOWNLOAD_ACTION = "DOWNLOAD"
 REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   LOGIN_ACTION: 2,
@@ -26,7 +27,8 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   PAUSE_ACTION: 0,
                   UN_PAUSE_ACTION: 0,
                   FORWARD_ACTION: 0,
-                  BACKWARD_ACTION: 0}
+                  BACKWARD_ACTION: 0,
+                  STOP: 0}
 
 DONE = "done"
 ERROR = "ERROR"
@@ -35,3 +37,13 @@ LIGHT_BLUE = "#ffffff"
 PURPLE = "#8A23F1"
 GREEN = "#ccffea"
 FAINT_GREEN = "#ffffff"
+
+
+
+
+"""
+עברית
+הצפנה לסיסמאות
+תור
+להפסיק שיר באמצע ולהתחיל חדש
+"""

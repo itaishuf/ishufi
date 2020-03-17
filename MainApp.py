@@ -93,7 +93,6 @@ class Window(tk.Frame):
         if txt == ERROR:
             return
         success, msg = self.client.download_song(txt)
-        print(success, msg)
         tk.messagebox.showinfo("Ishufi", msg)
 
     def pick_song(self):
@@ -122,10 +121,7 @@ class Window(tk.Frame):
 
 
 def main():
-    root = tk.Tk()
-    root.geometry("400x300")
-    app = Window(root)
-    root.mainloop()
+    pass
 
 
 if __name__ == '__main__':

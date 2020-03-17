@@ -54,6 +54,8 @@ class Server(object):
             self.skip_q.put(FORWARD_ACTION)
         elif action == BACKWARD_ACTION:
             self.skip_q.put(BACKWARD_ACTION)
+        elif action == STOP:
+            self.skip_q.put(STOP)
 
     def choose_song(self, name):
         name = name.split('@')[0]
@@ -71,12 +73,10 @@ class Server(object):
             frame_rate = wave_file.getframerate()
             channels = wave_file.getnchannels()
             my_format = pyaudio.get_format_from_width(wave_file.getsampwidth())
-        # print(frame_rate, channels, my_format)
         return str(frame_rate), str(channels), str(my_format)
 
     def download_song(self, song):
         song = song.replace('_', ' ')
-        # song = song.replace('@', ' ')
         downloader = YoutubeDownloader(song)
         msg = downloader.download()
         self.send_message(msg)
@@ -100,8 +100,10 @@ class Server(object):
                     msg = self.skip_q.get()
                     if msg == FORWARD_ACTION:
                         song.read(int(skip_amount))
-                    if msg == BACKWARD_ACTION:
+                    elif msg == BACKWARD_ACTION:
                         song.seek(-1*int(skip_amount), 1)
+                    elif msg == STOP:
+                        return
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
@@ -135,7 +137,6 @@ class Server(object):
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
         data, client_address = self.server_socket.recvfrom(int(size))
-        print('rec', data)
         data = data.decode()
         data = data.split("$")
         self.client_address = client_address

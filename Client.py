@@ -12,11 +12,12 @@ class Client(object):
         self.server_stream_address = (IP, STREAM_PORT)
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
-        self.song_playing = False
+        self.song_playing = ""
 
     def play(self):
         try:
             metadata, server_address = self.receive_streaming_msg()
+            print(metadata)
             metadata = metadata.decode().split('$')
             sample_rate = int(metadata[0])
             channels = int(metadata[1])
@@ -64,18 +65,21 @@ class Client(object):
         self.send_message(BACKWARD_ACTION)
 
     def play_song(self, lst):
-        print('lst', lst)
         song = lst[0]
         q = lst[1]
-        if self.song_playing:
+        print("song", song)
+        if self.song_playing == song:
             return
-        self.song_playing = True
+        elif self.song_playing != "":
+            self.send_message(STOP)
+        # time.sleep(0.1)
+        self.song_playing = song
         to_send = STREAM_ACTION + "$" + song
         self.send_streaming_message(to_send)
         msg = self.play()
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
-        self.song_playing = False
+        self.song_playing = ""
 
     def login(self, username, password):
         to_send = LOGIN_ACTION + "$" + username + "$" + password

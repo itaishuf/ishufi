@@ -81,7 +81,6 @@ class Window(tk.Frame):
         self.manager.switch_frame(window)
 
     def exit_window(self):
-        print("quit")
         self.quit()
         self.destroy()
 
