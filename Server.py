@@ -52,9 +52,15 @@ class Server(object):
             event.set()
         elif action == FORWARD_ACTION:
             self.skip_q.put(FORWARD_ACTION)
+        elif action == BACKWARD_ACTION:
+            self.skip_q.put(BACKWARD_ACTION)
 
     def choose_song(self, name):
-        path = str(Path.cwd()) + r'\songs\%s.wav' % name
+        name = name.split('@')[0]
+        path = ''
+        for filename in os.listdir(str(Path.cwd())+'/songs'):
+            if filename.endswith(".wav") and name in filename:
+                path = str(Path.cwd()) + r'\songs\%s' % filename
         if os.path.exists(path):
             return path
         else:
@@ -69,6 +75,8 @@ class Server(object):
         return str(frame_rate), str(channels), str(my_format)
 
     def download_song(self, song):
+        song = song.replace('_', ' ')
+        # song = song.replace('@', ' ')
         downloader = YoutubeDownloader(song)
         msg = downloader.download()
         self.send_message(msg)
@@ -89,13 +97,15 @@ class Server(object):
                 if self.pause:
                     e.wait()
                 if not self.skip_q.empty():
-                    self.skip_q.get()
-                    song.read(int(skip_amount))
+                    msg = self.skip_q.get()
+                    if msg == FORWARD_ACTION:
+                        song.read(int(skip_amount))
+                    if msg == BACKWARD_ACTION:
+                        song.seek(-1*int(skip_amount), 1)
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
 
-    # bytes/sec: (Sample Rate * BitsPerSample * Channels) / 8
     def get_byte_num(self, path):
         sample, channels, my_format = self.get_metadata(path)
         return (int(sample) * int(my_format) * int(channels)*15) / 8

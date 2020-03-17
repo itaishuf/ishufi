@@ -34,6 +34,7 @@ class Client(object):
                 new_data, server_address = self.receive_streaming_msg()
             end = time.time()
             my_time = end-start
+            print(my_time)
             return str(my_time)
         except socket.error as e:
             print(e)
@@ -42,7 +43,6 @@ class Client(object):
         to_send = DOWNLOAD_ACTION + "$" + song
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        print(data)
         data = data[0]
         if data == INVALID_REQ:
             return False, "didn't enter song"
@@ -60,7 +60,11 @@ class Client(object):
     def forward(self):
         self.send_message(FORWARD_ACTION)
 
+    def backward(self):
+        self.send_message(BACKWARD_ACTION)
+
     def play_song(self, lst):
+        print('lst', lst)
         song = lst[0]
         q = lst[1]
         if self.song_playing:
@@ -69,7 +73,6 @@ class Client(object):
         to_send = STREAM_ACTION + "$" + song
         self.send_streaming_message(to_send)
         msg = self.play()
-        print(msg)
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
         self.song_playing = False
@@ -98,7 +101,6 @@ class Client(object):
 
     def send_message(self, data):
         header, data = format_msg(data)
-        print('send msg', data, header)
         self.my_socket.sendto(header, self.server_address)
         self.my_socket.sendto(data, self.server_address)
 
@@ -115,7 +117,6 @@ class Client(object):
 
     def send_streaming_message(self, data):
         header, data = format_msg(data)
-        print('send streaming msg', data)
         self.my_socket_streaming.sendto(header, self.server_stream_address)
         self.my_socket_streaming.sendto(data, self.server_stream_address)
 

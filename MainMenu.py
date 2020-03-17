@@ -2,12 +2,12 @@ import tkinter as tk
 import tkinter.font
 import Client
 import MainApp
-import WindowManager
-import AddUserScreen
 import tkinter.messagebox
 GREEN = "#ccffea"
 FAINT_GREEN = "#ffffff"
 PURPLE = "#8A23F1"
+
+
 class Window(tk.Frame):
 
     def __init__(self, master, manager):
