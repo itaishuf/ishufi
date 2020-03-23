@@ -2,6 +2,7 @@
 import socket
 import pyaudio
 import time
+import threading
 from Consts import *
 
 
@@ -17,7 +18,7 @@ class Client(object):
     def play(self):
         try:
             metadata, server_address = self.receive_streaming_msg()
-            print(metadata)
+            print('metadata', metadata)
             metadata = metadata.decode().split('$')
             sample_rate = int(metadata[0])
             channels = int(metadata[1])
@@ -67,12 +68,12 @@ class Client(object):
     def play_song(self, lst):
         song = lst[0]
         q = lst[1]
-        print("song", song)
+        print(song, self.song_playing)
         if self.song_playing == song:
             return
         elif self.song_playing != "":
             self.send_message(STOP)
-        # time.sleep(0.1)
+            time.sleep(0.4)
         self.song_playing = song
         to_send = STREAM_ACTION + "$" + song
         self.send_streaming_message(to_send)

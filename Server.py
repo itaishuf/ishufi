@@ -88,6 +88,7 @@ class Server(object):
         sample_rate, channels, my_format = self.get_metadata(path)
         to_send = sample_rate + "$" + channels + '$' + my_format
         skip_amount = self.get_byte_num(path)
+        print('to send', to_send)
         self.send_streaming_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
@@ -103,6 +104,8 @@ class Server(object):
                     elif msg == BACKWARD_ACTION:
                         song.seek(-1*int(skip_amount), 1)
                     elif msg == STOP:
+                        print('stopping')
+                        self.send_streaming_message(FINISH)
                         return
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
