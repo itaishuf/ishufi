@@ -33,10 +33,9 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
 DONE = "done"
 ERROR = "ERROR"
 BLUE = "#ccffea"
-LIGHT_BLUE = "#ffffff"
+WHITE = "#ffffff"
 PURPLE = "#8A23F1"
 GREEN = "#ccffea"
-FAINT_GREEN = "#ffffff"
 
 
 
@@ -46,4 +45,10 @@ FAINT_GREEN = "#ffffff"
 הצפנה לסיסמאות
 תור
 ui יפה
+
+bugs
+
+cant play after download
+cant do anything while downloading
+msg send on a datagream was larger then the internal msg buffer or some other network limit- happens randomly
 """

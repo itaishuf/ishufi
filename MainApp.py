@@ -6,6 +6,7 @@ import threading
 import queue
 import time
 from Consts import *
+from PIL import Image, ImageTk
 
 
 class Window(tk.Frame):
@@ -17,6 +18,7 @@ class Window(tk.Frame):
         self.search_box = None
         self.search_box_artist = None
         self.client = Client.Client()
+        self.custom_button = None
 
         self.init_window()
 
@@ -31,31 +33,35 @@ class Window(tk.Frame):
                                fg=PURPLE, bg=GREEN)
         sign_in_txt.place(relx=0.3, rely=0.06, relwidth=0.4)
 
-        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=LIGHT_BLUE)
-        quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=WHITE)
+        quit_button.place(relx=0.4, rely=0.85, relwidth=0.2)
 
-        download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=LIGHT_BLUE)
-        download_button.place(relx=0.4, rely=0.65, relwidth=0.2)
+        download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=WHITE)
+        download_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
-        play_button = tk.Button(self, text="Play", command=self.pick_song, bg=LIGHT_BLUE)
-        play_button.place(relx=0.4, rely=0.55, relwidth=0.2)
+        load = Image.open(r"images\button7.png")
+        render = ImageTk.PhotoImage(load)
 
-        pause_button = tk.Button(self, text="Pause", command=self.pause, bg=LIGHT_BLUE)
+        play_button = tk.Button(self, image=render, command=self.pick_song, bg=WHITE)
+        play_button.image = render
+        play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
+
+        pause_button = tk.Button(self, text="Pause", command=self.pause, bg=WHITE)
         pause_button.place(relx=0.7, rely=0.55, relwidth=0.15)
 
-        un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=LIGHT_BLUE)
+        un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=WHITE)
         un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
 
-        forward_button = tk.Button(self, text="forward", command=self.forward, bg=LIGHT_BLUE)
+        forward_button = tk.Button(self, text="forward", command=self.forward, bg=WHITE)
         forward_button.place(relx=0.78, rely=0.75, relwidth=0.15)
 
-        backward_button = tk.Button(self, text="backward", command=self.backward, bg=LIGHT_BLUE)
+        backward_button = tk.Button(self, text="backward", command=self.backward, bg=WHITE)
         backward_button.place(relx=0.62, rely=0.75, relwidth=0.15)
 
         song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         song_txt.place(relx=0.3, rely=0.22, relwidth=0.4)
 
-        self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
+        self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
         self.search_box.place(relx=0.3, rely=0.3, relwidth=0.4)
         self.search_box.bind('<Return>', self.get_text)
 
@@ -63,9 +69,10 @@ class Window(tk.Frame):
                               bg=GREEN)
         artist_txt.place(relx=0.3, rely=0.38, relwidth=0.4)
 
-        self.search_box_artist = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=LIGHT_BLUE)
+        self.search_box_artist = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
         self.search_box_artist.place(relx=0.3, rely=0.45, relwidth=0.4)
         self.search_box_artist.bind('<Return>', self.get_text)
+
 
     def forward(self):
         self.client.forward()
