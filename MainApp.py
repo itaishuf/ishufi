@@ -39,15 +39,19 @@ class Window(tk.Frame):
         download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=WHITE)
         download_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
-        load = Image.open(r"images\button7.png")
-        render = ImageTk.PhotoImage(load)
+        load = Image.open(r"images\button8.png")
+        img = load.resize((50, 50), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(img)
 
-        play_button = tk.Button(self, image=render, command=self.pick_song, bg=WHITE)
+        play_button = tk.Button(self, image=render, command=self.pick_song, bg=GREEN)
         play_button.image = render
         play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
 
         pause_button = tk.Button(self, text="Pause", command=self.pause, bg=WHITE)
         pause_button.place(relx=0.7, rely=0.55, relwidth=0.15)
+
+        add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
+        add_q_button.place(relx=0.1, rely=0.55, relwidth=0.2)
 
         un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=WHITE)
         un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
@@ -73,6 +77,12 @@ class Window(tk.Frame):
         self.search_box_artist.place(relx=0.3, rely=0.45, relwidth=0.4)
         self.search_box_artist.bind('<Return>', self.get_text)
 
+    def add_to_queue(self):
+        self.client.q.put(self.get_text(None))
+
+    def check_q(self):
+        print('checking')
+        next_song = self.client.q.get()
 
     def forward(self):
         self.client.forward()

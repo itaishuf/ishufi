@@ -23,7 +23,7 @@ class Window(tk.Frame):
         self.pack(fill=tk.BOTH, expand=1)
 
         frame = tk.Frame(master=self, bg=GREEN)
-        frame.pack(fill=tk.BOTH, expand =1)
+        frame.pack(fill=tk.BOTH, expand=1)
 
         quit_button = tk.Button(self, text="Quit", command=self.manager_close_frame, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)

@@ -4,7 +4,6 @@ HEADER_SIZE = 5
 IP = "127.0.0.1"
 PORT = 8820
 STREAM_PORT = 8824
-PATH = r"C:\ishufi\songs\abc.wav"
 FINISH = b"finish"
 EMPTY_MSG = b''
 STREAM_ACTION = "STREAM"
@@ -38,17 +37,28 @@ PURPLE = "#8A23F1"
 GREEN = "#ccffea"
 
 
-
-
 """
+features
 עברית
 הצפנה לסיסמאות
 תור
 ui יפה
+shuffle
+
+
+
 
 bugs
-
 cant play after download
 cant do anything while downloading
-msg send on a datagream was larger then the internal msg buffer or some other network limit- happens randomly
+msg send on a datagram was larger then the internal msg buffer or some other network limit- happens randomly
+songs playing too fast/slow
+
+
+
+code
+simplify and document uses of constants
+documentation
+better choose action
+more efficient socket action messages
 """

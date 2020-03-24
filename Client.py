@@ -3,6 +3,7 @@ import socket
 import pyaudio
 import time
 import threading
+import queue
 from Consts import *
 
 
@@ -13,7 +14,9 @@ class Client(object):
         self.server_stream_address = (IP, STREAM_PORT)
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
+        self.play_next_song = False
         self.song_playing = ""
+        self.q = queue.Queue()
 
     def play(self):
         try:
@@ -66,6 +69,7 @@ class Client(object):
         self.send_message(BACKWARD_ACTION)
 
     def play_song(self, lst):
+        self.play_next_song = False
         song = lst[0]
         q = lst[1]
         print(song, self.song_playing)
@@ -81,6 +85,7 @@ class Client(object):
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
         self.song_playing = ""
+        self.play_next_song = True
 
     def login(self, username, password):
         to_send = LOGIN_ACTION + "$" + username + "$" + password
@@ -134,18 +139,18 @@ class Client(object):
             print(e)
             return FINISH, None
 
-    def receive_msg_not_song(self):
-        try:
-            size, server_address = self.my_socket_streaming.recvfrom(5)
-            data, server_address = self.my_socket_streaming.recvfrom(int(size))
-
-            data = data.decode()
-            data = data.split('$')
-            data = " ".join(data)
-            return data, server_address
-        except OSError as e:
-            print(e)
-            return FINISH, None
+    # def receive_msg_not_song(self):
+    #     try:
+    #         size, server_address = self.my_socket_streaming.recvfrom(5)
+    #         data, server_address = self.my_socket_streaming.recvfrom(int(size))
+    #
+    #         data = data.decode()
+    #         data = data.split('$')
+    #         data = " ".join(data)
+    #         return data, server_address
+    #     except OSError as e:
+    #         print(e)
+    #         return FINISH, None
 
     def close_com(self):
         self.my_socket_streaming.close()

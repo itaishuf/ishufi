@@ -16,7 +16,7 @@ class WindowManager(object):
         if self.active_frame_class is not None:
             self.close_frame()
         root = tk.Tk()
-        root.geometry("400x300")
+        root.geometry("600x450")
         app = frame_class(root, self)
         self.active_frame = root
         self.active_frame_class = frame_class

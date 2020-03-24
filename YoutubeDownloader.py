@@ -10,10 +10,11 @@ from Consts import *
 
 class YoutubeDownloader(object):
     def __init__(self, name):
-        self.name = name
+        self.name = name.replace(' ', '_')
         self.old_path = ''
         self.temp_path = ''
         self.new_path = ''
+        self.set_paths()
 
     def ur_lib(self):
         query_string = urllib.parse.urlencode({"search_query": self.name})
@@ -27,24 +28,23 @@ class YoutubeDownloader(object):
         subprocess.call(command)
 
     def set_paths(self):
-        self.old_path = r'c:\branch\ishufi\%s.mp4' % self.name
-        self.temp_path = r'c:\branch\ishufi\songs\%s.mp4' % self.name
-        self.new_path = r'c:\branch\ishufi\songs\%s.wav' % self.name
+        cwd = str(os.getcwd()) + '\\'
+        self.old_path = cwd + self.name + '.mp4'  # c:\ishufi\%s.mp4
+        self.temp_path = cwd + 'songs\\' + self.name + '.mp4'  # c:\ishufi\songs\%s.mp4'
+        self.new_path = cwd + 'songs\\' + self.name + '.wav'  # r'c:\ishufi\songs\%s.wav'
 
-    def move_to_dir(self):
+    def move_dir(self):
         print("moving")
         os.rename(self.old_path, self.temp_path)
-        command = r'ffmpeg -i %s c:\branch\ishufi\songs\%s.wav' % (self.temp_path, self.name)
+        command = r'ffmpeg -i %s %s' % (self.temp_path, self.new_path)
         subprocess.call(command)
         os.remove(self.temp_path)
 
     def download(self):
         try:
             url = self.ur_lib()
-            self.name = self.name.replace(' ', '_')
-            self.set_paths()
             self.dl(url)
-            self.move_to_dir()
+            self.move_dir()
             return SUCCESS
         except Exception as msg:
             print(msg)
