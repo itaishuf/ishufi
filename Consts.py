@@ -35,15 +35,17 @@ BLUE = "#ccffea"
 WHITE = "#ffffff"
 PURPLE = "#8A23F1"
 GREEN = "#ccffea"
+BIG = '600x450'
+SMALL = '200x150'
 
 
 """
 features
 עברית
 הצפנה לסיסמאות
-תור
 ui יפה
 shuffle
+playlists
 
 
 

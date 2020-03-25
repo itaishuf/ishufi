@@ -7,7 +7,7 @@ import queue
 import time
 from Consts import *
 from PIL import Image, ImageTk
-
+import MakePlaylist
 
 class Window(tk.Frame):
 
@@ -19,8 +19,12 @@ class Window(tk.Frame):
         self.search_box_artist = None
         self.client = Client.Client()
         self.custom_button = None
-
+        self.q = queue.Queue()
+        self.song_stack = []
+        queue_t = threading.Thread(target=self.check_q)
+        queue_t.start()
         self.init_window()
+
 
     def init_window(self):
         self.master.title("ishufi")
@@ -45,7 +49,7 @@ class Window(tk.Frame):
 
         play_button = tk.Button(self, image=render, command=self.pick_song, bg=GREEN)
         play_button.image = render
-        play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
+        play_button.place(relx=0.45, rely=0.55, relwidth=0.1)
 
         pause_button = tk.Button(self, text="Pause", command=self.pause, bg=WHITE)
         pause_button.place(relx=0.7, rely=0.55, relwidth=0.15)
@@ -53,13 +57,22 @@ class Window(tk.Frame):
         add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
         add_q_button.place(relx=0.1, rely=0.55, relwidth=0.2)
 
+        make_playlist_button = tk.Button(self, text="Make Playlist", command=self.make_playlist, bg=WHITE)
+        make_playlist_button.place(relx=0.1, rely=0.65, relwidth=0.2)
+
         un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=WHITE)
         un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
 
-        forward_button = tk.Button(self, text="forward", command=self.forward, bg=WHITE)
+        forward_button = tk.Button(self, text="forward 10s", command=self.forward, bg=WHITE)
         forward_button.place(relx=0.78, rely=0.75, relwidth=0.15)
 
-        backward_button = tk.Button(self, text="backward", command=self.backward, bg=WHITE)
+        next_song_button = tk.Button(self, text="next song", command=self.next_song, bg=WHITE)
+        next_song_button.place(relx=0.78, rely=0.85, relwidth=0.15)
+
+        last_song_button = tk.Button(self, text="last song", command=self.last_song, bg=WHITE)
+        last_song_button.place(relx=0.62, rely=0.85, relwidth=0.15)
+
+        backward_button = tk.Button(self, text="backward 10s", command=self.backward, bg=WHITE)
         backward_button.place(relx=0.62, rely=0.75, relwidth=0.15)
 
         song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
@@ -78,11 +91,37 @@ class Window(tk.Frame):
         self.search_box_artist.bind('<Return>', self.get_text)
 
     def add_to_queue(self):
-        self.client.q.put(self.get_text(None))
+        self.q.put(self.get_text(None))
+
+    def switch_window(self, window):
+        self.manager.switch_frame(window)
+
+    def manager_close_frame(self):
+        self.manager.close_frame()
+
+    def make_playlist(self):
+        playlist_window = self.manager.open_frame(MakePlaylist.Window, SMALL)
+
+    def next_song(self):
+        self.client.send_message(STOP)
+
+    def last_song(self):
+        if len(self.song_stack) == 0:
+            return
+        song = self.song_stack[-2]
+        print('last song', song)
+        self.play_song(song)
 
     def check_q(self):
-        print('checking')
-        next_song = self.client.q.get()
+        time.sleep(2)
+        while True:
+            next_song = self.q.get()
+            if next_song != '':
+                while not self.client.play_next_song:
+                    time.sleep(1)
+                print('adding', next_song)
+                self.play_song(next_song)
+            time.sleep(1)
 
     def forward(self):
         self.client.forward()
@@ -119,6 +158,8 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
+        self.song_stack.append(name)
+        print('playing', name)
         return_queue = queue.Queue()
         t_play = threading.Thread(target=self.client.play_song, args=((name, return_queue),))
         t_play.start()

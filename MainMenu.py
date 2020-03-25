@@ -25,7 +25,7 @@ class Window(tk.Frame):
         frame = tk.Frame(master=self, bg=GREEN)
         frame.pack(fill=tk.BOTH, expand=1)
 
-        quit_button = tk.Button(self, text="Quit", command=self.manager_close_frame, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
         continue_button = tk.Button(self, text="Log In", command=self.check_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
@@ -64,7 +64,7 @@ class Window(tk.Frame):
         else:
             tk.messagebox.showinfo("Ishufi", msg)
 
-    def manager_close_frame(self):
+    def call_manager_exit(self):
         self.manager.close_frame()
 
     def check_user(self):
@@ -76,7 +76,7 @@ class Window(tk.Frame):
             tk.messagebox.showinfo("Ishufi", msg)
 
     def switch_window(self, window):
-        self.manager.switch_frame(window)
+        self.manager.switch_frame(window, BIG)
 
     def exit_window(self):
         self.quit()

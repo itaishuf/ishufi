@@ -8,22 +8,33 @@ from Consts import *
 class WindowManager(object):
 
     def __init__(self):
-        self.active_frame_class = None
-        self.active_frame = None
-        self.switch_frame(MainMenu.Window)
+        self.active_frame_class = []
+        self.active_frame = []
+        self.switch_frame(MainMenu.Window, BIG)
 
-    def switch_frame(self, frame_class):
+    def switch_frame(self, frame_class, size):
         if self.active_frame_class is not None:
             self.close_frame()
         root = tk.Tk()
-        root.geometry("600x450")
+        root.geometry(size)
         app = frame_class(root, self)
-        self.active_frame = root
-        self.active_frame_class = frame_class
+        self.active_frame.append(root)
+        self.active_frame_class.append(frame_class)
+        root.mainloop()
+
+    def open_frame(self, frame_class, size):
+        root = tk.Tk()
+        root.geometry(size)
+        app = frame_class(root, self)
+        self.active_frame.append(root)
+        self.active_frame_class.append(frame_class)
         root.mainloop()
 
     def close_frame(self):
-        self.active_frame_class.exit_window(self.active_frame)
+        if len(self.active_frame) != 0 and len(self.active_frame_class) != 0:
+            my_frame = self.active_frame.pop()
+            my_frame_class = self.active_frame_class.pop()
+            my_frame_class.exit_window(my_frame)
 
 
 def main():

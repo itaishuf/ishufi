@@ -16,12 +16,10 @@ class Client(object):
         self.p = pyaudio.PyAudio()
         self.play_next_song = False
         self.song_playing = ""
-        self.q = queue.Queue()
 
     def play(self):
         try:
             metadata, server_address = self.receive_streaming_msg()
-            print('metadata', metadata)
             metadata = metadata.decode().split('$')
             sample_rate = int(metadata[0])
             channels = int(metadata[1])
@@ -72,7 +70,6 @@ class Client(object):
         self.play_next_song = False
         song = lst[0]
         q = lst[1]
-        print(song, self.song_playing)
         if self.song_playing == song:
             return
         elif self.song_playing != "":
@@ -101,7 +98,6 @@ class Client(object):
         to_send = ADD_ACTION + "$" + username + "$" + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        data = data.decode()
         if data == INVALID_REQ:
             return False, "didn't enter username or password"
         data = data.split('$')
