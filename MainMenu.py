@@ -71,6 +71,7 @@ class Window(tk.Frame):
         username, password = self.get_text(None)
         can_login, msg = self.client.login(username, password)
         if can_login:
+            self.client.current_user = username
             self.switch_window(MainApp.Window)
         else:
             tk.messagebox.showinfo("Ishufi", msg)

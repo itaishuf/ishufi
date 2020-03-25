@@ -15,7 +15,8 @@ class Client(object):
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
         self.play_next_song = False
-        self.song_playing = ""
+        self.song_playing = ''
+        self.current_user = ''
 
     def play(self):
         try:

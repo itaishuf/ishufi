@@ -11,12 +11,8 @@ def foo(e):
 
 
 def main():
-    e = threading.Event()
-    t = threading.Thread(target=foo, args=(e,))
-    t.start()
-    while True:
-        time.sleep(3)
-        e.set()
+    for i in range(1, 17):
+        print('song$'+ str(i) + ',', end=" ")
 
 
 

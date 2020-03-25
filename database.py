@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 from pathlib import Path
-import os.path
+from Consts import *
 
 
 class ConnectionDatabase:
@@ -11,7 +11,6 @@ class ConnectionDatabase:
         self.cursor = None
 
         self.create_cursor()
-    # cursor generation
 
     def create_cursor(self):
         self.cursor = self.connection.cursor()
@@ -58,6 +57,54 @@ class ConnectionDatabase:
         else:
             return False, "please enter username"
 
+    def edit_playlist(self, action, song, playlist):
+        if action == ADD_ACTION:
+            r = self.cursor.execute("SELECT * from playlists where name=?", (playlist,))
+            self.connection.commit()
+            data = []
+            for i in r:
+                data = i
+            data = data[2:data.index('')]
+            next_song_num = len(data)+1
+            next_song = 'song$' + str(next_song_num)
+            if song in data:
+                return
+            command = "UPDATE playlists SET %s = %s WHERE name = %s;" % (next_song, song, playlist)
+            print(command)
+            self.cursor.execute(command)
+
+    def link_user_to_playlist(self, username, playlist):
+        list_id, user_id = None, None
+        r = self.cursor.execute("SELECT id from users where username=?", (username,))
+        self.connection.commit()
+        for i in r:
+            print('found name')
+            user_id = i
+        rn = self.cursor.execute("SELECT id from playlists where name=?", (playlist, ))
+        self.connection.commit()
+        for i in rn:
+            print('found list')
+            list_id = i
+        if list_id is None or user_id is None:
+            print('didnt find')
+            return
+        # TODO: handle errors
+        print(list_id, user_id)
+        self.cursor.execute("insert into playlist_per_user (playlist, user) values(?, ?) ", (list_id[0], user_id[0]))
+        self.connection.commit()
+
+    def add_new_playlist(self, params):
+        params = pad_playlist(params)
+        self.cursor.execute("insert into playlists (name, song$1, song$2, song$3, song$4, song$5,"
+                            " song$6, song$7, song$8, song$9, song$10, song$11, song$12, song$13,"
+                            " song$14, song$15, song$16) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
+                            " ?, ?, ?, ?, ?, ?)", params)
+        self.connection.commit()
+
+
+def pad_playlist(params):
+        return params + [None]*(17-len(params))
+
 
 def main():
     """
@@ -65,10 +112,7 @@ def main():
     """
     # opening connection
     c = ConnectionDatabase()
-    s = c.add_user("aa", "11")
-    print(s)
-    s = c.check_login("aa", "11")
-    print(s)
+    c.edit_playlist(ADD_ACTION, 'rock30', 'itai')
 
 
 if __name__ == '__main__':
