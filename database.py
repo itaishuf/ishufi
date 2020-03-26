@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 from pathlib import Path
+
 from Consts import *
 
 
@@ -59,51 +60,90 @@ class ConnectionDatabase:
 
     def edit_playlist(self, action, song, playlist):
         if action == ADD_ACTION:
-            r = self.cursor.execute("SELECT * from playlists where name=?", (playlist,))
-            self.connection.commit()
-            data = []
-            for i in r:
-                data = i
-            data = data[2:data.index('')]
-            next_song_num = len(data)+1
-            next_song = 'song$' + str(next_song_num)
-            if song in data:
-                return
-            command = "UPDATE playlists SET %s = %s WHERE name = %s;" % (next_song, song, playlist)
-            print(command)
-            self.cursor.execute(command)
+            self.add_song_to_playlist(song, playlist)
+        elif action == REMOVE_ACTION:
+            self.remove_song_from_playlist(song, playlist)
+
+    def remove_song_from_playlist(self, song, playlist):
+        command = "UPDATE playlists SET %s = 0 WHERE songs = '%s'" % (playlist, song)
+        self.execute(command)
+
+    def add_song_to_playlist(self, song, playlist):
+        command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (playlist, song)
+        self.execute(command)
 
     def link_user_to_playlist(self, username, playlist):
-        list_id, user_id = None, None
-        r = self.cursor.execute("SELECT id from users where username=?", (username,))
-        self.connection.commit()
-        for i in r:
-            print('found name')
-            user_id = i
-        rn = self.cursor.execute("SELECT id from playlists where name=?", (playlist, ))
-        self.connection.commit()
-        for i in rn:
-            print('found list')
-            list_id = i
-        if list_id is None or user_id is None:
-            print('didnt find')
+        if playlist not in self.get_column_list("playlists"):
             return
-        # TODO: handle errors
-        print(list_id, user_id)
-        self.cursor.execute("insert into playlist_per_user (playlist, user) values(?, ?) ", (list_id[0], user_id[0]))
+        command = "SELECT id FROM users WHERE username = '%s'" % username
+        my_id = self.execute(command)[0]
+        command = "INSERT INTO user_to_list(user, playlist) VALUES('%s', '%s')" % (my_id, playlist)
+        self.execute(command)
+
+    def unlink_user_to_playlist(self, username, playlist):
+        if playlist not in self.get_column_list("playlists"):
+            return
+        command = "SELECT id FROM users WHERE username = '%s'" % username
+        my_id = self.execute(command)[0]
+        command = "DELETE FROM user_to_list WHERE playlist='%s' AND user='%s'" % (playlist, my_id)
+        self.execute(command)
+
+    def delete_playlist(self, playlist):
+        column_list = self.get_column_list("playlists")
+        if playlist in column_list:
+            column_list.remove(playlist)
+        columns = format_column_list(column_list)
+        command = "BEGIN TRANSACTION;" \
+                  "CREATE TEMPORARY TABLE t1_backup(%s); " \
+                  "INSERT INTO t1_backup SELECT %s FROM %s; " \
+                  "DROP TABLE %s; " \
+                  "CREATE TABLE %s(%s); " \
+                  "INSERT INTO %s SELECT %s FROM t1_backup; " \
+                  "DROP TABLE t1_backup; " \
+                  "COMMIT; " % (columns, columns, "playlists", "playlists", "playlists", columns, "playlists", columns)
+        self.cursor.executescript(command)
         self.connection.commit()
 
-    def add_new_playlist(self, params):
-        params = pad_playlist(params)
-        self.cursor.execute("insert into playlists (name, song$1, song$2, song$3, song$4, song$5,"
-                            " song$6, song$7, song$8, song$9, song$10, song$11, song$12, song$13,"
-                            " song$14, song$15, song$16) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                            " ?, ?, ?, ?, ?, ?)", params)
+    def get_column_list(self, table):
+        command = "PRAGMA table_info(%s)" % table
+        return self.execute(command, offset=1)
+
+    def add_song(self, song, playlist):
+        command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (playlist, song)
+        self.execute(command)
+
+    def add_new_song(self, song):
+        command = "INSERT INTO playlists(songs) VALUES('%s')" % song
+        self.execute(command)
+
+    def init_new_playlist(self, playlist):
+        command = "alter table playlists add '%s' INTEGER NOT NULL DEFAULT 0" % playlist
+        self.execute(command)
+
+    def create_new_playlist(self, songs, playlist):
+        self.init_new_playlist(playlist)
+        for song in songs:
+            self.add_song(song, playlist)
+
+    def get_songs(self, playlist):
+        command = "SELECT songs FROM playlists WHERE %s = 1" % playlist
+        return self.execute(command)
+
+    def execute(self, command, offset=0):
+        r = self.cursor.execute(command)
         self.connection.commit()
+        data = []
+        for i in r:
+            data.append(i[offset])
+        return data
 
 
-def pad_playlist(params):
-        return params + [None]*(17-len(params))
+def format_column_list(column_list):
+    to_send = ""
+    for x in column_list:
+        to_send += x
+        to_send += ', '
+    return to_send[:-2]
 
 
 def main():
@@ -112,7 +152,7 @@ def main():
     """
     # opening connection
     c = ConnectionDatabase()
-    c.edit_playlist(ADD_ACTION, 'rock30', 'itai')
+    c.unlink_user_to_playlist("itai", "shira")
 
 
 if __name__ == '__main__':

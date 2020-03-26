@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import socket
-import pyaudio
 import time
-import threading
-import queue
+import pyaudio
+
 from Consts import *
 
 

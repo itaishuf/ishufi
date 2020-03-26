@@ -1,13 +1,16 @@
+import queue
+import threading
+import time
 import tkinter as tk
 import tkinter.font
 from tkinter import messagebox
-import Client
-import threading
-import queue
-import time
-from Consts import *
+
 from PIL import Image, ImageTk
+
+import Client
 import MakePlaylist
+from Consts import *
+
 
 class Window(tk.Frame):
 
