@@ -58,17 +58,17 @@ class ConnectionDatabase:
         else:
             return False, "please enter username"
 
-    def edit_playlist(self, action, song, playlist):
+    def edit_pl(self, action, song, playlist):
         if action == ADD_ACTION:
-            self.add_song_to_playlist(song, playlist)
+            self.add_song_to_pl(song, playlist)
         elif action == REMOVE_ACTION:
-            self.remove_song_from_playlist(song, playlist)
+            self.remove_song_from_pl(song, playlist)
 
-    def remove_song_from_playlist(self, song, playlist):
+    def remove_song_from_pl(self, song, playlist):
         command = "UPDATE playlists SET %s = 0 WHERE songs = '%s'" % (playlist, song)
         self.execute(command)
 
-    def add_song_to_playlist(self, song, playlist):
+    def add_song_to_pl(self, song, playlist):
         command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (playlist, song)
         self.execute(command)
 
@@ -78,7 +78,7 @@ class ConnectionDatabase:
         data = self.execute(command)
         return data != []
 
-    def link_user_to_playlist(self, username, playlist):
+    def link_user_to_pl(self, username, playlist):
         if playlist not in self.get_column_list("playlists"):
             return
         if self.check_if_linked(username, playlist):
@@ -92,7 +92,7 @@ class ConnectionDatabase:
         my_id = self.execute(command)[0]
         return my_id
 
-    def unlink_user_to_playlist(self, username, playlist):
+    def unlink_user_to_pl(self, username, playlist):
         if playlist not in self.get_column_list("playlists"):
             return
         if not self.check_if_linked(username, playlist):
@@ -101,7 +101,7 @@ class ConnectionDatabase:
         command = "DELETE FROM user_to_list WHERE playlist='%s' AND user='%s'" % (playlist, my_id)
         self.execute(command)
 
-    def delete_playlist(self, playlist):
+    def delete_pl(self, playlist):
         column_list = self.get_column_list("playlists")
         if playlist in column_list:
             column_list.remove(playlist)
@@ -133,17 +133,17 @@ class ConnectionDatabase:
         command = "alter table playlists add '%s' INTEGER NOT NULL DEFAULT 0" % playlist
         self.execute(command)
 
-    def check_if_playlist_exists(self, playlist):
+    def check_if_pl_exists(self, playlist):
         playlists = self.get_column_list("playlists")
         return playlist in playlists
 
-    def create_new_playlist(self, songs, playlist, user):
-        if self.check_if_playlist_exists(playlist):
+    def create_new_pl(self, songs, playlist, user):
+        if self.check_if_pl_exists(playlist):
             return "playlist name taken"
         self.init_new_playlist(playlist)
         for song in songs:
             self.add_song(song, playlist)
-        # self.link_user_to_playlist(user, playlist)
+        self.link_user_to_pl(user, playlist)
         return "playlist created successfully"
 
     def get_songs(self, playlist):
@@ -162,11 +162,10 @@ class ConnectionDatabase:
         command = "Select songs from playlists"
         return self.execute(command)
 
-    def get_all_playlists_of_user(self, username):
+    def get_all_pls_of_user(self, username):
         my_id = self.get_user_id(username)
         command = "SELECT playlist FROM user_to_list WHERE user='%s'" % my_id
         lists = self.execute(command)
-        print(lists)
         return lists
 
 

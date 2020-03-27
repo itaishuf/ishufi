@@ -56,29 +56,36 @@ class Server(object):
             self.skip_q.put(BACKWARD_ACTION)
         elif action == STOP:
             self.skip_q.put(STOP)
-        elif action == CREATE_PLAYLIST_ACTION:
-            self.create_new_playlist(params)
+        elif action == CREATE_PL_ACTION:
+            self.create_new_pl(params)
         elif action == GET_ALL_SONGS:
             self.get_all_songs()
-        elif action == GET_ALL_PLAYLISTS_OF_USER:
-            self.get_all_playlists_of_user(params[0])
+        elif action == GET_ALL_PLS_OF_USER:
+            self.get_all_pls_of_user(params[0])
+        elif action == GET_SONGS_IN_PL:
+            self.get_all_songs_in_pl(params[0])
 
     def get_all_songs(self):
         to_send = self.db.get_all_songs()
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 
-    def get_all_playlists_of_user(self, username):
-        to_send = self.db.get_all_playlists_of_user(username)
+    def get_all_pls_of_user(self, username):
+        to_send = self.db.get_all_pls_of_user(username)
         print(to_send)
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 
-    def create_new_playlist(self, params):
+    def get_all_songs_in_pl(self, playlist):
+        to_send = self.db.get_songs(playlist)
+        to_send = '$'.join(to_send)
+        self.send_message(to_send)
+
+    def create_new_pl(self, params):
         name = params[1]
         user = params[0]
         songs = params[2].split('&')
-        msg = self.db.create_new_playlist(songs, name, user)
+        msg = self.db.create_new_pl(songs, name, user)
         self.send_message(msg)
 
     def download_song(self, song):

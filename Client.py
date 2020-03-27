@@ -56,16 +56,17 @@ class Client(object):
 
     def create_playlist(self, songs, playlist):
         # creates playlist and links the current user to it
-        to_send = CREATE_PLAYLIST_ACTION + '$' + self.current_user + '$' + playlist + '$' + '&'.join(songs)
+        to_send = CREATE_PL_ACTION + '$' + self.current_user + '$' + playlist + '$' + '&'.join(songs)
+        print(to_send)
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
 
-    def browse_playlists_and_link(self):
+    def browse_pl_and_link(self):
         # returns a list of all playlists and links one of them to the current user
         pass
 
-    def edit_playlist(self, song, playlist):
+    def edit_pl(self, song, playlist):
         # adds or removes a song from a playlist
         pass
 
@@ -74,11 +75,17 @@ class Client(object):
         data, server_address = self.receive_msg()
         return data
 
-    def get_all_playlists_of_user(self):
-        to_send = GET_ALL_PLAYLISTS_OF_USER + '$' + self.current_user
+    def get_songs_in_pl(self, playlist):
+        to_send = GET_SONGS_IN_PL + '$' + playlist
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         print(data)
+        return data
+
+    def get_all_pls_of_user(self):
+        to_send = GET_ALL_PLS_OF_USER + '$' + self.current_user
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
         return data
 
     def pause(self):

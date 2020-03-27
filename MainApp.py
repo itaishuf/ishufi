@@ -59,7 +59,7 @@ class Window(tk.Frame):
         add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
         add_q_button.place(relx=0.1, rely=0.55, relwidth=0.2)
 
-        make_playlist_button = tk.Button(self, text="Make Playlist", command=self.make_playlist, bg=WHITE)
+        make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=WHITE)
         make_playlist_button.place(relx=0.1, rely=0.65, relwidth=0.2)
 
         un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=WHITE)
