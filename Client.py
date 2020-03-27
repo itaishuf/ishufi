@@ -2,6 +2,8 @@
 import socket
 import time
 import pyaudio
+import queue
+import threading
 
 from Consts import *
 
@@ -13,9 +15,14 @@ class Client(object):
         self.server_stream_address = (IP, STREAM_PORT)
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
+        self.q = queue.Queue()
         self.play_next_song = False
         self.song_playing = ''
         self.current_user = ''
+
+        self.song_stack = []
+        queue_t = threading.Thread(target=self.check_q)
+        queue_t.start()
 
     def play(self):
         try:
@@ -57,18 +64,9 @@ class Client(object):
     def create_playlist(self, songs, playlist):
         # creates playlist and links the current user to it
         to_send = CREATE_PL_ACTION + '$' + self.current_user + '$' + playlist + '$' + '&'.join(songs)
-        print(to_send)
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
-
-    def browse_pl_and_link(self):
-        # returns a list of all playlists and links one of them to the current user
-        pass
-
-    def edit_pl(self, song, playlist):
-        # adds or removes a song from a playlist
-        pass
 
     def get_all_songs(self):
         self.send_message(GET_ALL_SONGS)
@@ -79,7 +77,6 @@ class Client(object):
         to_send = GET_SONGS_IN_PL + '$' + playlist
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        print(data)
         return data
 
     def get_all_pls_of_user(self):
@@ -100,7 +97,7 @@ class Client(object):
     def backward(self):
         self.send_message(BACKWARD_ACTION)
 
-    def play_song(self, lst):
+    def play_song_thread(self, lst):
         self.play_next_song = False
         song = lst[0]
         q = lst[1]
@@ -117,6 +114,29 @@ class Client(object):
             q.put(INVALID_REQ)
         self.song_playing = ""
         self.play_next_song = True
+
+    def play_song_top(self, name):
+        self.song_stack.append(name)
+        print('playing', name)
+        return_queue = queue.Queue()
+        t_play = threading.Thread(target=self.play_song_thread, args=((name, return_queue),))
+        t_play.start()
+        time.sleep(0.1)
+        if return_queue.empty():
+            return None
+        if return_queue.get() == INVALID_REQ:
+            return "song doesnt exist"
+
+    def check_q(self):
+        time.sleep(2)
+        while True:
+            next_song = self.q.get()
+            if next_song != '':
+                while not self.play_next_song:
+                    time.sleep(1)
+                print('adding', next_song)
+                self.play_song_top(next_song)
+            time.sleep(1)
 
     def login(self, username, password):
         to_send = LOGIN_ACTION + "$" + username + "$" + password

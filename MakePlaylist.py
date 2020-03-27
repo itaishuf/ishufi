@@ -56,6 +56,9 @@ class Window(tk.Frame):
         remove_button = tk.Button(self, text='remove song from playlist', command=self.remove_song_from_pl, bg=WHITE)  # TODO : add image
         remove_button.place(relx=0.05, rely=0.6, relwidth=0.3)
 
+        play_button = tk.Button(self, text='play playlist', command=self.play_pl, bg=WHITE)  # TODO : add image
+        play_button.place(relx=0.05, rely=0.7, relwidth=0.3)
+
         view_all_button = tk.Button(self, text='view all songs', command=self.fill_pl_songs, bg=WHITE)  # TODO:add image
         view_all_button.place(relx=0.7, rely=0.5, relwidth=0.2)
 
@@ -73,6 +76,15 @@ class Window(tk.Frame):
         if name == "":
             return ERROR
         return name
+
+    def play_pl(self):
+        self.choose_pl()
+        if self.chosen_pl == "":
+            return
+        songs = self.client.get_songs_in_pl(self.chosen_pl)
+        msg = self.client.play_song_top(songs[0])
+        for song in songs[1:]:
+            self.client.q.put(song)
 
     def fill_pls(self):
         self.clear_listbox(self.playlists_box)
@@ -101,7 +113,6 @@ class Window(tk.Frame):
     def choose_pl(self):
         index = self.playlists_box.curselection()
         self.chosen_pl = self.playlists_box.get(index)
-        self.choose_pl()
         self.song_label["text"] = "All songs in %s" % self.chosen_pl
         self.fill_pl_songs(self.chosen_pl)
         self.master.lift()

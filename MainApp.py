@@ -1,5 +1,3 @@
-import queue
-import threading
 import time
 import tkinter as tk
 import tkinter.font
@@ -7,7 +5,6 @@ from tkinter import messagebox
 
 from PIL import Image, ImageTk
 
-import Client
 import MakePlaylist
 from Consts import *
 
@@ -22,10 +19,6 @@ class Window(tk.Frame):
         self.search_box_artist = None
         self.client = client
         self.custom_button = None
-        self.q = queue.Queue()
-        self.song_stack = []
-        queue_t = threading.Thread(target=self.check_q)
-        queue_t.start()
         self.init_window()
 
     def init_window(self):
@@ -93,7 +86,7 @@ class Window(tk.Frame):
         self.search_box_artist.bind('<Return>', self.get_text)
 
     def add_to_queue(self):
-        self.q.put(self.get_text(None))
+        self.client.q.put(self.get_text(None))
 
     def switch_window(self, window):
         self.manager.switch_frame(window)
@@ -102,22 +95,24 @@ class Window(tk.Frame):
         self.manager.close_frame()
 
     def make_playlist(self):
-        playlist_window = self.manager.open_frame(MakePlaylist.Window, BIG)
+        self.manager.open_frame(MakePlaylist.Window, BIG)
 
     def next_song(self):
         self.client.send_message(STOP)
 
     def last_song(self):
-        if len(self.song_stack) == 0:
+        if len(self.client.song_stack) == 0:
             return
-        song = self.song_stack[-2]
-        print('last song', song)
+        self.client.song_stack.pop()
+        song = self.client.song_stack[-1]
+        self.client.song_stack.pop()
+        print("last song", song)
         self.play_song(song)
 
     def check_q(self):
         time.sleep(2)
         while True:
-            next_song = self.q.get()
+            next_song = self.client.q.get()
             if next_song != '':
                 while not self.client.play_next_song:
                     time.sleep(1)
@@ -160,16 +155,21 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
-        self.song_stack.append(name)
-        print('playing', name)
-        return_queue = queue.Queue()
-        t_play = threading.Thread(target=self.client.play_song, args=((name, return_queue),))
-        t_play.start()
-        time.sleep(0.1)
-        if return_queue.empty():
-            return
-        if return_queue.get() == INVALID_REQ:
+        msg = self.client.play_song_top(name)
+        if msg is not None:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
+
+    # def play_song_edit(self, name):
+    #     self.song_stack.append(name)
+    #     print('playing', name)
+    #     return_queue = queue.Queue()
+    #     t_play = threading.Thread(target=self.client.play_song, args=((name, return_queue),))
+    #     t_play.start()
+    #     time.sleep(0.1)
+    #     if return_queue.empty():
+    #         return
+    #     if return_queue.get() == INVALID_REQ:
+    #         tk.messagebox.showinfo("Ishufi", "song doesnt exist")
 
     def call_manager_exit(self):
         self.client.close_com()
