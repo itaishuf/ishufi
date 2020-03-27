@@ -36,7 +36,7 @@ class Server(object):
             self.send_message(INVALID_REQ)
             return
         if action == STREAM_ACTION:
-            path = self.choose_song(params[0])
+            path = choose_song(params[0])
             self.stream_song(path, event)
         elif action == LOGIN_ACTION:
             self.login_check(params[0], params[1])
@@ -56,24 +56,30 @@ class Server(object):
             self.skip_q.put(BACKWARD_ACTION)
         elif action == STOP:
             self.skip_q.put(STOP)
+        elif action == CREATE_PLAYLIST_ACTION:
+            self.create_new_playlist(params)
+        elif action == GET_ALL_SONGS:
+            self.get_all_songs()
+        elif action == GET_ALL_PLAYLISTS_OF_USER:
+            self.get_all_playlists_of_user(params[0])
 
-    def choose_song(self, name):
-        name = name.split('@')[0]
-        path = ''
-        for filename in os.listdir(str(Path.cwd())+'/songs'):
-            if filename.endswith(".wav") and name in filename:
-                path = str(Path.cwd()) + r'\songs\%s' % filename
-        if os.path.exists(path):
-            return path
-        else:
-            return "doesnt exist"
+    def get_all_songs(self):
+        to_send = self.db.get_all_songs()
+        to_send = '$'.join(to_send)
+        self.send_message(to_send)
 
-    def get_metadata(self, my_path):
-        with wave.open(my_path, "rb") as wave_file:
-            frame_rate = wave_file.getframerate()
-            channels = wave_file.getnchannels()
-            my_format = pyaudio.get_format_from_width(wave_file.getsampwidth())
-        return str(frame_rate), str(channels), str(my_format)
+    def get_all_playlists_of_user(self, username):
+        to_send = self.db.get_all_playlists_of_user(username)
+        print(to_send)
+        to_send = '$'.join(to_send)
+        self.send_message(to_send)
+
+    def create_new_playlist(self, params):
+        name = params[1]
+        user = params[0]
+        songs = params[2].split('&')
+        msg = self.db.create_new_playlist(songs, name, user)
+        self.send_message(msg)
 
     def download_song(self, song):
         song = song.replace('_', ' ')
@@ -82,12 +88,12 @@ class Server(object):
         self.send_message(msg)
 
     def stream_song(self, path, e):
-        if path == "":
+        if path == ERROR:
             self.send_streaming_message(INVALID_REQ)
             return
-        sample_rate, channels, my_format = self.get_metadata(path)
+        sample_rate, channels, my_format = get_metadata(path)
         to_send = sample_rate + "$" + channels + '$' + my_format
-        skip_amount = self.get_byte_num(path)
+        skip_amount = get_byte_num(path)
         print('to send', to_send)
         self.send_streaming_message(to_send)
         with open(path, 'rb') as song:
@@ -110,10 +116,6 @@ class Server(object):
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
-
-    def get_byte_num(self, path):
-        sample, channels, my_format = self.get_metadata(path)
-        return (int(sample) * int(my_format) * int(channels)*15) / 8
 
     def login_check(self, username, password):
         can_login, msg = self.db.check_login(username, password)
@@ -173,6 +175,36 @@ class Server(object):
                 self.choose_action(client_req[0], client_req[1:], event)
         except socket.error as e:
             print(e)
+
+
+def song_check(song):
+    msg = choose_song(song)
+    return msg != ERROR
+
+
+def get_byte_num(path):
+    sample, channels, my_format = get_metadata(path)
+    return (int(sample) * int(my_format) * int(channels)*15) / 8
+
+
+def choose_song(name):
+    name = name.split('@')[0]
+    path = ''
+    for filename in os.listdir(str(Path.cwd())+'/songs'):
+        if filename.endswith(".wav") and name in filename:
+            path = str(Path.cwd()) + r'\songs\%s' % filename
+    if os.path.exists(path):
+        return path
+    else:
+        return ERROR
+
+
+def get_metadata(my_path):
+    with wave.open(my_path, "rb") as wave_file:
+        frame_rate = wave_file.getframerate()
+        channels = wave_file.getnchannels()
+        my_format = pyaudio.get_format_from_width(wave_file.getsampwidth())
+    return str(frame_rate), str(channels), str(my_format)
 
 
 def format_msg(msg):

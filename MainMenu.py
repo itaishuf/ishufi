@@ -8,13 +8,13 @@ from Consts import *
 
 class Window(tk.Frame):
 
-    def __init__(self, master, manager):
+    def __init__(self, master, manager, client):
         tk.Frame.__init__(self, master)
         self.manager = manager
         self.master = master
         self.username_entry = None
         self.password_entry = None
-        self.client = Client.Client()
+        self.client = client
 
         self.init_window()
 
@@ -28,8 +28,8 @@ class Window(tk.Frame):
         quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         quit_button.place(relx=0.4, rely=0.75, relwidth=0.2)
 
-        continue_button = tk.Button(self, text="Log In", command=self.check_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
-        continue_button.place(relx=0.4, rely=0.65, relwidth=0.2)
+        log_in_button = tk.Button(self, text="Log In", command=self.check_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
+        log_in_button.place(relx=0.4, rely=0.65, relwidth=0.2)
 
         add_user_button = tk.Button(self, text="Register", command=self.add_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         add_user_button.place(relx=0.4, rely=0.55, relwidth=0.2)
@@ -69,6 +69,8 @@ class Window(tk.Frame):
 
     def check_user(self):
         username, password = self.get_text(None)
+        username = "itai"
+        password ="123"
         can_login, msg = self.client.login(username, password)
         if can_login:
             self.client.current_user = username

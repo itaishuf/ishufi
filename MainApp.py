@@ -14,20 +14,19 @@ from Consts import *
 
 class Window(tk.Frame):
 
-    def __init__(self, master, manager):
+    def __init__(self, master, manager, client):
         tk.Frame.__init__(self, master)
         self.manager = manager
         self.master = master
         self.search_box = None
         self.search_box_artist = None
-        self.client = Client.Client()
+        self.client = client
         self.custom_button = None
         self.q = queue.Queue()
         self.song_stack = []
         queue_t = threading.Thread(target=self.check_q)
         queue_t.start()
         self.init_window()
-
 
     def init_window(self):
         self.master.title("ishufi")
@@ -103,7 +102,7 @@ class Window(tk.Frame):
         self.manager.close_frame()
 
     def make_playlist(self):
-        playlist_window = self.manager.open_frame(MakePlaylist.Window, SMALL)
+        playlist_window = self.manager.open_frame(MakePlaylist.Window, BIG)
 
     def next_song(self):
         self.client.send_message(STOP)

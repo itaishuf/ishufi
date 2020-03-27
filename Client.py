@@ -54,6 +54,33 @@ class Client(object):
         else:
             return False, ERROR
 
+    def create_playlist(self, songs, playlist):
+        # creates playlist and links the current user to it
+        to_send = CREATE_PLAYLIST_ACTION + '$' + self.current_user + '$' + playlist + '$' + '&'.join(songs)
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        return data
+
+    def browse_playlists_and_link(self):
+        # returns a list of all playlists and links one of them to the current user
+        pass
+
+    def edit_playlist(self, song, playlist):
+        # adds or removes a song from a playlist
+        pass
+
+    def get_all_songs(self):
+        self.send_message(GET_ALL_SONGS)
+        data, server_address = self.receive_msg()
+        return data
+
+    def get_all_playlists_of_user(self):
+        to_send = GET_ALL_PLAYLISTS_OF_USER + '$' + self.current_user
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        print(data)
+        return data
+
     def pause(self):
         self.send_message(PAUSE_ACTION)
 
@@ -134,19 +161,6 @@ class Client(object):
         except OSError as e:
             print(e)
             return FINISH, None
-
-    # def receive_msg_not_song(self):
-    #     try:
-    #         size, server_address = self.my_socket_streaming.recvfrom(5)
-    #         data, server_address = self.my_socket_streaming.recvfrom(int(size))
-    #
-    #         data = data.decode()
-    #         data = data.split('$')
-    #         data = " ".join(data)
-    #         return data, server_address
-    #     except OSError as e:
-    #         print(e)
-    #         return FINISH, None
 
     def close_com(self):
         self.my_socket_streaming.close()

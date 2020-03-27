@@ -72,19 +72,32 @@ class ConnectionDatabase:
         command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (playlist, song)
         self.execute(command)
 
+    def check_if_linked(self, username, playlist):
+        my_id = self.get_user_id(username)
+        command = "select * from user_to_list where user='%s' and playlist='%s'" % (my_id, playlist)
+        data = self.execute(command)
+        return data != []
+
     def link_user_to_playlist(self, username, playlist):
         if playlist not in self.get_column_list("playlists"):
             return
-        command = "SELECT id FROM users WHERE username = '%s'" % username
-        my_id = self.execute(command)[0]
+        if self.check_if_linked(username, playlist):
+            return
+        my_id = self.get_user_id(username)
         command = "INSERT INTO user_to_list(user, playlist) VALUES('%s', '%s')" % (my_id, playlist)
         self.execute(command)
+
+    def get_user_id(self, username):
+        command = "SELECT id FROM users WHERE username = '%s'" % username
+        my_id = self.execute(command)[0]
+        return my_id
 
     def unlink_user_to_playlist(self, username, playlist):
         if playlist not in self.get_column_list("playlists"):
             return
-        command = "SELECT id FROM users WHERE username = '%s'" % username
-        my_id = self.execute(command)[0]
+        if not self.check_if_linked(username, playlist):
+            return
+        my_id = self.get_user_id(username)
         command = "DELETE FROM user_to_list WHERE playlist='%s' AND user='%s'" % (playlist, my_id)
         self.execute(command)
 
@@ -120,10 +133,18 @@ class ConnectionDatabase:
         command = "alter table playlists add '%s' INTEGER NOT NULL DEFAULT 0" % playlist
         self.execute(command)
 
-    def create_new_playlist(self, songs, playlist):
+    def check_if_playlist_exists(self, playlist):
+        playlists = self.get_column_list("playlists")
+        return playlist in playlists
+
+    def create_new_playlist(self, songs, playlist, user):
+        if self.check_if_playlist_exists(playlist):
+            return "playlist name taken"
         self.init_new_playlist(playlist)
         for song in songs:
             self.add_song(song, playlist)
+        # self.link_user_to_playlist(user, playlist)
+        return "playlist created successfully"
 
     def get_songs(self, playlist):
         command = "SELECT songs FROM playlists WHERE %s = 1" % playlist
@@ -136,6 +157,17 @@ class ConnectionDatabase:
         for i in r:
             data.append(i[offset])
         return data
+
+    def get_all_songs(self):
+        command = "Select songs from playlists"
+        return self.execute(command)
+
+    def get_all_playlists_of_user(self, username):
+        my_id = self.get_user_id(username)
+        command = "SELECT playlist FROM user_to_list WHERE user='%s'" % my_id
+        lists = self.execute(command)
+        print(lists)
+        return lists
 
 
 def format_column_list(column_list):
@@ -152,7 +184,6 @@ def main():
     """
     # opening connection
     c = ConnectionDatabase()
-    c.unlink_user_to_playlist("itai", "shira")
 
 
 if __name__ == '__main__':
