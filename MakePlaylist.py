@@ -16,7 +16,7 @@ class Window(tk.Frame):
         self.master = master
         self.client = client
         self.songs = []
-        self.pls = []
+        self.chosen_pl = ""
         self.playlist_name = None
         self.all_songs = client.get_all_songs()
         self.all_playlists = client.get_all_pls_of_user()
@@ -50,13 +50,16 @@ class Window(tk.Frame):
         create_button = tk.Button(self, text='create playlist', command=self.create_pl, bg=WHITE)  # TODO : add image
         create_button.place(relx=0.7, rely=0.76, relwidth=0.2)
 
-        edit_button = tk.Button(self, text='edit playlist', command=self.edit_pl, bg=WHITE)  # TODO : add image
-        edit_button.place(relx=0.1, rely=0.5, relwidth=0.2)
+        choose_pl_button = tk.Button(self, text='choose playlist', command=self.choose_pl, bg=WHITE)  # TODO : add image
+        choose_pl_button.place(relx=0.05, rely=0.5, relwidth=0.3)
+
+        remove_button = tk.Button(self, text='remove song from playlist', command=self.remove_song_from_pl, bg=WHITE)  # TODO : add image
+        remove_button.place(relx=0.05, rely=0.6, relwidth=0.3)
 
         view_all_button = tk.Button(self, text='view all songs', command=self.fill_pl_songs, bg=WHITE)  # TODO:add image
         view_all_button.place(relx=0.7, rely=0.5, relwidth=0.2)
 
-        self.songs_listbox = tk.Listbox(master=self, selectmode=tk.MULTIPLE)
+        self.songs_listbox = tk.Listbox(master=self, selectmode=tk.SINGLE)
         self.songs_listbox.place(relx=0.65, rely=0.1, relwidth=0.3)
         self.fill_all_songs()
 
@@ -96,18 +99,12 @@ class Window(tk.Frame):
             self.songs.append(self.songs_listbox.get(index))
 
     def choose_pl(self):
-        self.pls = []
-        indexes = self.playlists_box.curselection()
-        if indexes == ():
-            tk.messagebox.showinfo("Ishufi", "choose a playlist")
-            return False
-        for index in indexes:
-            self.pls.append(self.playlists_box.get(index))
-        if len(self.pls) > 1:
-            tk.messagebox.showinfo("Ishufi", "choose only one playlist")
-            self.pls = []
-            return False
-        return True
+        index = self.playlists_box.curselection()
+        self.chosen_pl = self.playlists_box.get(index)
+        self.choose_pl()
+        self.song_label["text"] = "All songs in %s" % self.chosen_pl
+        self.fill_pl_songs(self.chosen_pl)
+        self.master.lift()
 
     def create_pl(self):
         name = self.get_text(None)
@@ -121,14 +118,8 @@ class Window(tk.Frame):
         self.fill_pls()
         self.master.lift()
 
-    def edit_pl(self):
-        check = self.choose_pl()
-        my_pl = self.pls[0]
-        if not check:
-            return
-        self.song_label["text"] = "All songs in %s" % my_pl
-        self.fill_pl_songs(my_pl)
-        self.master.lift()
+    def remove_song_from_pl(self):
+        self.choose_songs()
 
     def call_manager_exit(self):
         self.manager.close_frame()
