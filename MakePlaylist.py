@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font
 import tkinter.messagebox
+import random
 from Consts import *
 
 
@@ -80,10 +81,10 @@ class Window(tk.Frame):
         msg = self.client.delete_pl(self.client.current_user, self.chosen_pl)
 
     def play_pl(self):
-        self.choose_pl()
         if self.chosen_pl == "":
             return
         songs = self.client.get_songs_in_pl(self.chosen_pl)
+        songs = random.shuffle(songs)
         msg = self.client.play_song_top(songs[0])
         for song in songs[1:]:
             self.client.q.put(song)
@@ -133,15 +134,16 @@ class Window(tk.Frame):
     def remove_song_from_pl(self):
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
-        msg = self.client.remove_song_from_pl(self.selected_songs[0], self.chosen_pl)
-        print(msg)
+        if self.selected_songs or self.chosen_pl is None:
+            msg = self.client.remove_song_from_pl(self.selected_songs[0], self.chosen_pl)
+            print(msg)
 
     def add_song_to_pl(self):
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
-        print(self.selected_songs[0], self.chosen_pl)
-        msg = self.client.add_song_to_pl(self.selected_songs[0], self.chosen_pl)
-        print(msg)
+        if self.selected_songs or self.chosen_pl is None:
+            msg = self.client.add_song_to_pl(self.selected_songs[0], self.chosen_pl)
+            print(msg)
 
     def call_manager_exit(self):
         self.manager.close_frame()
@@ -155,6 +157,9 @@ class Window(tk.Frame):
 
     def clear_listbox(self, listbox):
         listbox.delete(0, listbox.size())
+
+def shuffle():
+    pass
 
 
 def main():
