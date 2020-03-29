@@ -68,6 +68,12 @@ class Client(object):
         data, server_address = self.receive_msg()
         return data
 
+    def delete_pl(self, user, playlist):
+        to_send = UNLINK_PLAYLIST + '$' + self.current_user + '$' + playlist
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        return data
+
     def get_all_songs(self):
         self.send_message(GET_ALL_SONGS)
         data, server_address = self.receive_msg()
@@ -81,6 +87,18 @@ class Client(object):
 
     def get_all_pls_of_user(self):
         to_send = GET_ALL_PLS_OF_USER + '$' + self.current_user
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        return data
+
+    def remove_song_from_pl(self, song, pl):
+        to_send = REMOVE_SONG_FROM_PL + '$' + song + '$' + pl
+        self.send_message(to_send)
+        data, server_address = self.receive_msg()
+        return data
+
+    def add_song_to_pl(self, song, pl):
+        to_send = ADD_SONG_TO_PL + '$' + song + '$' + pl
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data

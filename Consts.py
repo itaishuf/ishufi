@@ -21,6 +21,9 @@ CREATE_PL_ACTION = "CREATE"
 GET_ALL_SONGS = "GETALLSONGS"
 GET_ALL_PLS_OF_USER = "GETALLPLAYLISTSUSER"
 GET_SONGS_IN_PL = "GETSONGSINPL"
+REMOVE_SONG_FROM_PL = "REMOVESONGFROMPL"
+ADD_SONG_TO_PL = "ADDSONGTOPL"
+UNLINK_PLAYLIST = "UNLINKPL"
 
 INVALID_REQ = "invalid"
 SUCCESS = "Success"
@@ -41,7 +44,10 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   CREATE_PL_ACTION: 3,
                   GET_ALL_SONGS: 0,
                   GET_ALL_PLS_OF_USER: 1,
-                  GET_SONGS_IN_PL: 1}
+                  GET_SONGS_IN_PL: 1,
+                  ADD_SONG_TO_PL: 2,
+                  REMOVE_SONG_FROM_PL: 2,
+                  UNLINK_PLAYLIST: 2}
 
 
 BLUE = "#ccffea"
@@ -58,8 +64,6 @@ features
 הצפנה לסיסמאות
 ui יפה
 shuffle
-playlists
-
 
 
 

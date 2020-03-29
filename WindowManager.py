@@ -3,6 +3,7 @@ import Client
 import MainApp
 import MainMenu
 from Consts import *
+import sys
 
 
 class WindowManager(object):
@@ -14,7 +15,7 @@ class WindowManager(object):
         self.switch_frame(MainMenu.Window, BIG)
 
     def switch_frame(self, frame_class, size):
-        if self.active_frame_class is not None:
+        if self.active_frame_class:
             self.close_frame()
         root = tk.Tk()
         root.geometry(size)
@@ -38,6 +39,8 @@ class WindowManager(object):
             my_frame = self.active_frame.pop()
             my_frame_class = self.active_frame_class.pop()
             my_frame_class.exit_window(my_frame)
+        if len(self.active_frame) == 0 and len(self.active_frame_class) == 0:
+            print("no active windows")
 
     def on_exit(self):
         self.close_frame()

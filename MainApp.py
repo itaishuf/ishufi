@@ -19,6 +19,7 @@ class Window(tk.Frame):
         self.search_box_artist = None
         self.client = client
         self.custom_button = None
+
         self.init_window()
 
     def init_window(self):
@@ -115,7 +116,7 @@ class Window(tk.Frame):
             next_song = self.client.q.get()
             if next_song != '':
                 while not self.client.play_next_song:
-                    time.sleep(1)
+                    time.sleep(0.5)
                 print('adding', next_song)
                 self.play_song(next_song)
             time.sleep(1)

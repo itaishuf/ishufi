@@ -64,6 +64,30 @@ class Server(object):
             self.get_all_pls_of_user(params[0])
         elif action == GET_SONGS_IN_PL:
             self.get_all_songs_in_pl(params[0])
+        elif action == REMOVE_SONG_FROM_PL:
+            self.remove_song_from_pl(params[0], params[1])
+        elif action == ADD_SONG_TO_PL:
+            self.add_song_to_pl(params[0], params[1])
+        elif action == UNLINK_PLAYLIST:
+            self.delete_pl(params[0], params[1])
+
+    def remove_song_from_pl(self, song, pl):
+        to_send = self.db.remove_song_from_pl(song, pl)
+        if not to_send:
+            to_send = SUCCESS
+        self.send_message(to_send)
+
+    def add_song_to_pl(self, song, pl):
+        to_send = self.db.add_song_to_pl(song, pl)
+        if not to_send:
+            to_send = SUCCESS
+        self.send_message(to_send)
+
+    def delete_pl(self, user, playlist):
+        to_send = self.db.unlink_user_to_pl(user, playlist)
+        if to_send is None:
+            self.send_message(ERROR)
+        self.send_message(SUCCESS)
 
     def get_all_songs(self):
         to_send = self.db.get_all_songs()
@@ -72,7 +96,6 @@ class Server(object):
 
     def get_all_pls_of_user(self, username):
         to_send = self.db.get_all_pls_of_user(username)
-        print(to_send)
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 

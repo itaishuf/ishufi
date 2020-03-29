@@ -1,9 +1,5 @@
 import tkinter as tk
-import tkinter.filedialog
 import tkinter.font
-import Client
-import MainApp
-import os
 import tkinter.messagebox
 from Consts import *
 
@@ -15,16 +11,16 @@ class Window(tk.Frame):
         self.manager = manager
         self.master = master
         self.client = client
-        self.songs = []
+        self.selected_songs = []
         self.chosen_pl = ""
         self.playlist_name = None
-        self.all_songs = client.get_all_songs()
         self.all_playlists = client.get_all_pls_of_user()
         self.songs_listbox = None
         self.my_lists = None
         self.song_label = None
         self.pl_label = None
         self.playlists_box = None
+
         self.init_window()
 
     def init_window(self):
@@ -47,35 +43,41 @@ class Window(tk.Frame):
         self.playlist_name.place(relx=0.65, rely=0.7, relwidth=0.3)
         self.playlist_name.bind('<Return>', self.get_text)
 
-        create_button = tk.Button(self, text='create playlist', command=self.create_pl, bg=WHITE)  # TODO : add image
+        create_button = tk.Button(self, text='create playlist', command=self.create_pl, bg=WHITE)
         create_button.place(relx=0.7, rely=0.76, relwidth=0.2)
 
-        choose_pl_button = tk.Button(self, text='choose playlist', command=self.choose_pl, bg=WHITE)  # TODO : add image
-        choose_pl_button.place(relx=0.05, rely=0.5, relwidth=0.3)
+        remove_button = tk.Button(self, text='remove song from playlist', command=self.remove_song_from_pl, bg=WHITE)
+        remove_button.place(relx=0.05, rely=0.5, relwidth=0.3)
 
-        remove_button = tk.Button(self, text='remove song from playlist', command=self.remove_song_from_pl, bg=WHITE)  # TODO : add image
-        remove_button.place(relx=0.05, rely=0.6, relwidth=0.3)
+        add_button = tk.Button(self, text='add song to playlist', command=self.add_song_to_pl, bg=WHITE)
+        add_button.place(relx=0.05, rely=0.6, relwidth=0.3)
 
-        play_button = tk.Button(self, text='play playlist', command=self.play_pl, bg=WHITE)  # TODO : add image
+        play_button = tk.Button(self, text='play playlist', command=self.play_pl, bg=WHITE)
         play_button.place(relx=0.05, rely=0.7, relwidth=0.3)
 
-        view_all_button = tk.Button(self, text='view all songs', command=self.fill_pl_songs, bg=WHITE)  # TODO:add image
+        view_all_button = tk.Button(self, text='view all songs', command=self.fill_pl_songs, bg=WHITE)
         view_all_button.place(relx=0.7, rely=0.5, relwidth=0.2)
 
-        self.songs_listbox = tk.Listbox(master=self, selectmode=tk.SINGLE)
-        self.songs_listbox.place(relx=0.65, rely=0.1, relwidth=0.3)
-        self.fill_all_songs()
+        view_all_button = tk.Button(self, text='delete playlist', command=self.delete_pl, bg=WHITE)
+        view_all_button.place(relx=0.4, rely=0.1, relwidth=0.2)
 
-        self.playlists_box = tk.Listbox(master=self, selectmode=tk.MULTIPLE)
+        self.songs_listbox = tk.Listbox(master=self, selectmode=tk.MULTIPLE, exportselection=False)
+        self.songs_listbox.place(relx=0.65, rely=0.1, relwidth=0.3)
+        self.fill_pl_songs()
+
+        self.playlists_box = tk.Listbox(master=self, selectmode=tk.SINGLE, exportselection=False)
         self.playlists_box.place(relx=0.05, rely=0.1, relwidth=0.3)
-        for i in range(len(self.all_playlists)):
-            self.playlists_box.insert(i, self.all_playlists[i])
+        self.fill_pls()
+        self.playlists_box.bind('<<ListboxSelect>>', self.choose_pl)
 
     def get_text(self, event):
         name = self.playlist_name.get().replace(' ', '_')
         if name == "":
             return ERROR
         return name
+
+    def delete_pl(self):
+        msg = self.client.delete_pl(self.client.current_user, self.chosen_pl)
 
     def play_pl(self):
         self.choose_pl()
@@ -92,45 +94,54 @@ class Window(tk.Frame):
         for i in range(len(self.all_playlists)):
             self.playlists_box.insert(i, self.all_playlists[i])
 
-    def fill_all_songs(self):
+    def fill_pl_songs(self, playlist=None):
         self.clear_listbox(self.songs_listbox)
-        for i in range(len(self.all_songs)):
-            self.songs_listbox.insert(i, self.all_songs[i])
-
-    def fill_pl_songs(self, playlist):
-        self.clear_listbox(self.songs_listbox)
-        songs = self.client.get_songs_in_pl(playlist)
+        if playlist is None:
+            songs = self.client.get_all_songs()
+        else:
+            songs = self.client.get_songs_in_pl(playlist)
         for i in range(len(songs)):
             self.songs_listbox.insert(i, songs[i])
 
     def choose_songs(self):
-        self.songs = []
+        self.selected_songs = []
         indexes = self.songs_listbox.curselection()
-        print(indexes)
         for index in indexes:
-            self.songs.append(self.songs_listbox.get(index))
+            self.selected_songs.append(self.songs_listbox.get(index))
 
-    def choose_pl(self):
-        index = self.playlists_box.curselection()
-        self.chosen_pl = self.playlists_box.get(index)
-        self.song_label["text"] = "All songs in %s" % self.chosen_pl
-        self.fill_pl_songs(self.chosen_pl)
-        self.master.lift()
+    def choose_pl(self, event=None):
+        try:
+            index = self.playlists_box.curselection()
+            self.chosen_pl = self.playlists_box.get(index)
+            self.song_label["text"] = "All songs in %s" % self.chosen_pl
+            self.fill_pl_songs(self.chosen_pl)
+            self.master.lift()
+        except tk.TclError as e:
+            print(e)
 
     def create_pl(self):
         name = self.get_text(None)
         if name == ERROR:
             return
         self.choose_songs()
-        print(self.songs)
-        msg = self.client.create_playlist(self.songs, name)
+        msg = self.client.create_playlist(self.selected_songs, name)
         msg = " ".join(msg)
         tk.messagebox.showinfo("Ishufi", msg)
         self.fill_pls()
         self.master.lift()
 
     def remove_song_from_pl(self):
+        self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
+        msg = self.client.remove_song_from_pl(self.selected_songs[0], self.chosen_pl)
+        print(msg)
+
+    def add_song_to_pl(self):
+        self.songs_listbox.config(selectmode=tk.SINGLE)
+        self.choose_songs()
+        print(self.selected_songs[0], self.chosen_pl)
+        msg = self.client.add_song_to_pl(self.selected_songs[0], self.chosen_pl)
+        print(msg)
 
     def call_manager_exit(self):
         self.manager.close_frame()
