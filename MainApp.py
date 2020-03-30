@@ -26,7 +26,7 @@ class Window(tk.Frame):
         self.master.title("ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        frame = tk.Frame(master=self, bg=BLUE)
+        frame = tk.Frame(master=self, bg=GREEN)
         frame.pack(fill=tk.BOTH, expand=1)
 
         sign_in_txt = tk.Label(self, text="Search", font=tk.font.Font(family='tahoma', size='20', weight="bold"),

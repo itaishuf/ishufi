@@ -57,7 +57,7 @@ class Window(tk.Frame):
         play_button.place(relx=0.05, rely=0.7, relwidth=0.3)
 
         view_all_button = tk.Button(self, text='view downloaded songs', command=self.fill_pl_songs, bg=WHITE)
-        view_all_button.place(relx=0.7, rely=0.5, relwidth=0.2)
+        view_all_button.place(relx=0.65, rely=0.5, relwidth=0.3)
 
         delete_button = tk.Button(self, text='delete playlist', command=self.delete_pl, bg=WHITE)
         delete_button.place(relx=0.4, rely=0.1, relwidth=0.2)
