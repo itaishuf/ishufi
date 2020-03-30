@@ -59,10 +59,8 @@ SMALL = '300x225'
 
 """
 features
-עברית
 הצפנה לסיסמאות
 ui יפה
-shuffle
 
 
 

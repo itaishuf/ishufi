@@ -160,18 +160,6 @@ class Window(tk.Frame):
         if msg is not None:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
 
-    # def play_song_edit(self, name):
-    #     self.song_stack.append(name)
-    #     print('playing', name)
-    #     return_queue = queue.Queue()
-    #     t_play = threading.Thread(target=self.client.play_song, args=((name, return_queue),))
-    #     t_play.start()
-    #     time.sleep(0.1)
-    #     if return_queue.empty():
-    #         return
-    #     if return_queue.get() == INVALID_REQ:
-    #         tk.messagebox.showinfo("Ishufi", "song doesnt exist")
-
     def call_manager_exit(self):
         self.client.close_com()
         self.manager.close_frame()

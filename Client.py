@@ -213,6 +213,6 @@ class Client(object):
 
 
 def format_msg(msg):
-    header = str(len(msg))
+    header = str(len(msg.encode()))
     header = header.zfill(5)
     return header.encode(), msg.encode()

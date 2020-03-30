@@ -115,6 +115,8 @@ class Server(object):
         song = song.replace('_', ' ')
         downloader = YoutubeDownloader(song)
         msg = downloader.download()
+        if msg == SUCCESS:
+            self.db.add_new_song(song)
         self.send_message(msg)
 
     def stream_song(self, path, e):
@@ -171,7 +173,9 @@ class Server(object):
 
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
+        print(size)
         data, client_address = self.server_socket.recvfrom(int(size))
+        print(data)
         data = data.decode()
         data = data.split("$")
         self.client_address = client_address
@@ -179,7 +183,6 @@ class Server(object):
 
     def send_message(self, data):
         header, data = format_msg(data)
-        print('send msg', data)
         self.server_socket.sendto(header, self.client_address)
         self.server_socket.sendto(data, self.client_address)
 
@@ -204,7 +207,7 @@ class Server(object):
                 client_req = self.receive_streaming_msg()
                 self.choose_action(client_req[0], client_req[1:], event)
         except socket.error as e:
-            print(e)
+            print('stream', e)
 
 
 def song_check(song):
