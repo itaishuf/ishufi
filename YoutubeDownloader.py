@@ -49,11 +49,3 @@ class YoutubeDownloader(object):
         except Exception as msg:
             print(msg)
             return ERROR
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()

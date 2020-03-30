@@ -216,11 +216,3 @@ def format_msg(msg):
     header = str(len(msg))
     header = header.zfill(5)
     return header.encode(), msg.encode()
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()

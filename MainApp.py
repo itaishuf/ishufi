@@ -179,11 +179,3 @@ class Window(tk.Frame):
     def exit_window(self):
         self.destroy()
         self.quit()
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()

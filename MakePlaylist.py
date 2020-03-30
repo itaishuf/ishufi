@@ -34,7 +34,7 @@ class Window(tk.Frame):
         create_pl_txt = tk.Label(self, text="enter playlist name", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         create_pl_txt.place(relx=0.65, rely=0.65, relwidth=0.3)
 
-        self.song_label = tk.Label(self, text="All songs", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        self.song_label = tk.Label(self, text="All Downloaded Songs", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         self.song_label.place(relx=0.65, rely=0.05, relwidth=0.3)
 
         self.pl_label = tk.Label(self, text="My playlists", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
@@ -56,11 +56,11 @@ class Window(tk.Frame):
         play_button = tk.Button(self, text='play playlist', command=self.play_pl, bg=WHITE)
         play_button.place(relx=0.05, rely=0.7, relwidth=0.3)
 
-        view_all_button = tk.Button(self, text='view all songs', command=self.fill_pl_songs, bg=WHITE)
+        view_all_button = tk.Button(self, text='view downloaded songs', command=self.fill_pl_songs, bg=WHITE)
         view_all_button.place(relx=0.7, rely=0.5, relwidth=0.2)
 
-        view_all_button = tk.Button(self, text='delete playlist', command=self.delete_pl, bg=WHITE)
-        view_all_button.place(relx=0.4, rely=0.1, relwidth=0.2)
+        delete_button = tk.Button(self, text='delete playlist', command=self.delete_pl, bg=WHITE)
+        delete_button.place(relx=0.4, rely=0.1, relwidth=0.2)
 
         self.songs_listbox = tk.Listbox(master=self, selectmode=tk.MULTIPLE, exportselection=False)
         self.songs_listbox.place(relx=0.65, rely=0.1, relwidth=0.3)
@@ -99,6 +99,7 @@ class Window(tk.Frame):
         self.clear_listbox(self.songs_listbox)
         if playlist is None:
             songs = self.client.get_all_songs()
+            self.song_label["text"] = "All Downloaded songs"
         else:
             songs = self.client.get_songs_in_pl(playlist)
         for i in range(len(songs)):
@@ -161,10 +162,3 @@ class Window(tk.Frame):
 def shuffle():
     pass
 
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()

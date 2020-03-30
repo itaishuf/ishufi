@@ -50,7 +50,6 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   UNLINK_PLAYLIST: 2}
 
 
-BLUE = "#ccffea"
 WHITE = "#ffffff"
 PURPLE = "#8A23F1"
 GREEN = "#ccffea"
