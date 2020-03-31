@@ -7,15 +7,14 @@ from Consts import *
 
 class Window(tk.Frame):
 
-    def __init__(self, master, manager, client):
+    def __init__(self, master, manager):
         tk.Frame.__init__(self, master)
         self.manager = manager
         self.master = master
-        self.client = client
         self.selected_songs = []
         self.chosen_pl = ""
         self.playlist_name = None
-        self.all_playlists = client.get_all_pls_of_user()
+        self.all_playlists = manager.client.get_all_pls_of_user()
         self.songs_listbox = None
         self.my_lists = None
         self.song_label = None
@@ -56,7 +55,7 @@ class Window(tk.Frame):
         play_button = tk.Button(self, text='play playlist', command=self.play_pl, bg=WHITE)
         play_button.place(relx=0.05, rely=0.7, relwidth=0.3)
 
-        view_all_button = tk.Button(self, text='view downloaded songs', command=self.fill_pl_songs, bg=WHITE)
+        view_all_button = tk.Button(self, text='view all downloaded songs', command=self.fill_pl_songs, bg=WHITE)
         view_all_button.place(relx=0.65, rely=0.5, relwidth=0.3)
 
         delete_button = tk.Button(self, text='delete playlist', command=self.delete_pl, bg=WHITE)
@@ -78,30 +77,30 @@ class Window(tk.Frame):
         return name
 
     def delete_pl(self):
-        msg = self.client.delete_pl(self.client.current_user, self.chosen_pl)
+        msg = self.manager.client.delete_pl(self.chosen_pl)
 
     def play_pl(self):
         if self.chosen_pl == "":
             return
-        songs = self.client.get_songs_in_pl(self.chosen_pl)
+        songs = self.manager.client.get_songs_in_pl(self.chosen_pl)
         songs = random.shuffle(songs)
-        msg = self.client.play_song_top(songs[0])
+        msg = self.manager.client.play_song_top(songs[0])
         for song in songs[1:]:
-            self.client.q.put(song)
+            self.manager.client.q.put(song)
 
     def fill_pls(self):
         self.clear_listbox(self.playlists_box)
-        self.all_playlists = self.client.get_all_pls_of_user()
+        self.all_playlists = self.manager.client.get_all_pls_of_user()
         for i in range(len(self.all_playlists)):
             self.playlists_box.insert(i, self.all_playlists[i])
 
     def fill_pl_songs(self, playlist=None):
         self.clear_listbox(self.songs_listbox)
         if playlist is None:
-            songs = self.client.get_all_songs()
+            songs = self.manager.client.get_all_songs()
             self.song_label["text"] = "All Downloaded songs"
         else:
-            songs = self.client.get_songs_in_pl(playlist)
+            songs = self.manager.client.get_songs_in_pl(playlist)
         for i in range(len(songs)):
             self.songs_listbox.insert(i, songs[i])
 
@@ -126,7 +125,7 @@ class Window(tk.Frame):
         if name == ERROR:
             return
         self.choose_songs()
-        msg = self.client.create_playlist(self.selected_songs, name)
+        msg = self.manager.client.create_playlist(self.selected_songs, name)
         msg = " ".join(msg)
         tk.messagebox.showinfo("Ishufi", msg)
         self.fill_pls()
@@ -136,14 +135,14 @@ class Window(tk.Frame):
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
         if self.selected_songs or self.chosen_pl is None:
-            msg = self.client.remove_song_from_pl(self.selected_songs[0], self.chosen_pl)
+            msg = self.manager.client.remove_song_from_pl(self.selected_songs[0], self.chosen_pl)
             print(msg)
 
     def add_song_to_pl(self):
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
         if self.selected_songs or self.chosen_pl is None:
-            msg = self.client.add_song_to_pl(self.selected_songs[0], self.chosen_pl)
+            msg = self.manager.client.add_song_to_pl(self.selected_songs[0], self.chosen_pl)
             print(msg)
 
     def call_manager_exit(self):
@@ -158,7 +157,3 @@ class Window(tk.Frame):
 
     def clear_listbox(self, listbox):
         listbox.delete(0, listbox.size())
-
-def shuffle():
-    pass
-

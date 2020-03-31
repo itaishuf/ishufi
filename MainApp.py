@@ -11,13 +11,12 @@ from Consts import *
 
 class Window(tk.Frame):
 
-    def __init__(self, master, manager, client):
+    def __init__(self, master, manager):
         tk.Frame.__init__(self, master)
         self.manager = manager
         self.master = master
         self.search_box = None
         self.search_box_artist = None
-        self.client = client
         self.custom_button = None
 
         self.init_window()
@@ -87,7 +86,7 @@ class Window(tk.Frame):
         self.search_box_artist.bind('<Return>', self.get_text)
 
     def add_to_queue(self):
-        self.client.q.put(self.get_text(None))
+        self.manager.client.q.put(self.get_text(None))
 
     def switch_window(self, window):
         self.manager.switch_frame(window)
@@ -99,39 +98,39 @@ class Window(tk.Frame):
         self.manager.open_frame(MakePlaylist.Window, BIG)
 
     def next_song(self):
-        self.client.send_message(STOP)
+        self.manager.client.send_message(STOP)
 
     def last_song(self):
-        if len(self.client.song_stack) == 0:
+        if len(self.manager.client.song_stack) == 0:
             return
-        self.client.song_stack.pop()
-        song = self.client.song_stack[-1]
-        self.client.song_stack.pop()
+        self.manager.client.song_stack.pop()
+        song = self.manager.client.song_stack[-1]
+        self.manager.client.song_stack.pop()
         print("last song", song)
         self.play_song(song)
 
-    def check_q(self):
-        time.sleep(2)
-        while True:
-            next_song = self.client.q.get()
-            if next_song != '':
-                while not self.client.play_next_song:
-                    time.sleep(0.5)
-                print('adding', next_song)
-                self.play_song(next_song)
-            time.sleep(1)
+    # def check_q(self):
+    #    time.sleep(2)
+    #    while True:
+    #        next_song = self.client.q.get()
+    #        if next_song != '':
+    #            while not self.client.play_next_song:
+    #                time.sleep(0.5)
+    #            print('adding', next_song)
+    #            self.play_song(next_song)
+    #        time.sleep(1)
 
     def forward(self):
-        self.client.forward()
+        self.manager.client.forward()
 
     def backward(self):
-        self.client.backward()
+        self.manager.client.backward()
 
     def pause(self):
-        self.client.pause()
+        self.manager.client.pause()
 
     def un_pause(self):
-        self.client.un_pause()
+        self.manager.client.un_pause()
 
     def get_text(self, event):
         song = self.search_box.get().replace(' ', '_')
@@ -146,7 +145,7 @@ class Window(tk.Frame):
         txt = self.get_text(None)
         if txt == ERROR:
             return
-        success, msg = self.client.download_song(txt)
+        success, msg = self.manager.client.download_song(txt)
         tk.messagebox.showinfo("Ishufi", msg)
 
     def pick_song(self):
@@ -156,12 +155,12 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
-        msg = self.client.play_song_top(name)
+        msg = self.manager.client.play_song_top(name)
         if msg is not None:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
 
     def call_manager_exit(self):
-        self.client.close_com()
+        self.manager.client.close_com()
         self.manager.close_frame()
 
     def exit_window(self):

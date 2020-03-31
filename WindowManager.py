@@ -1,9 +1,7 @@
 import tkinter as tk
 import Client
-import MainApp
 import MainMenu
 from Consts import *
-import sys
 
 
 class WindowManager(object):

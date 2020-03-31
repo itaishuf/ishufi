@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 import socket
 import time
@@ -27,13 +28,13 @@ class Client(object):
     def play(self):
         try:
             metadata, server_address = self.receive_streaming_msg()
+            if metadata == INVALID_REQ.encode():
+                return INVALID_REQ
             metadata = metadata.decode().split('$')
             sample_rate = int(metadata[0])
             channels = int(metadata[1])
             my_format = int(metadata[2])
             new_data, server_address = self.receive_streaming_msg()
-            if new_data == INVALID_REQ.encode():
-                return INVALID_REQ
             p = pyaudio.PyAudio()
             stream = p.open(format=my_format, channels=channels, rate=sample_rate,
                             output=True, frames_per_buffer=4096)
@@ -68,7 +69,7 @@ class Client(object):
         data, server_address = self.receive_msg()
         return data
 
-    def delete_pl(self, user, playlist):
+    def delete_pl(self, playlist):
         to_send = UNLINK_PLAYLIST + '$' + self.current_user + '$' + playlist
         self.send_message(to_send)
         data, server_address = self.receive_msg()
@@ -170,11 +171,10 @@ class Client(object):
         to_send = ADD_ACTION + "$" + username + "$" + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        if data == INVALID_REQ:
-            return False, "didn't enter username or password"
-        data = data.split('$')
         can_login = eval(data[0])
         msg = " ".join(data[1:])
+        if data == INVALID_REQ:
+            return False, "didn't enter username or password"
         return can_login, msg
 
     def send_message(self, data):
@@ -213,6 +213,8 @@ class Client(object):
 
 
 def format_msg(msg):
-    header = str(len(msg.encode()))
+    if type(msg) == str:
+        msg = msg.encode()
+    header = str(len(msg))
     header = header.zfill(5)
-    return header.encode(), msg.encode()
+    return header.encode(), msg

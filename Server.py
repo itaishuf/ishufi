@@ -160,7 +160,6 @@ class Server(object):
     def receive_streaming_msg(self):
         size, client_streaming_address = self.server_socket_streaming.recvfrom(HEADER_SIZE)
         data, client_streaming_address = self.server_socket_streaming.recvfrom(int(size))
-        print('receive stream', data)
         data = data.decode()
         data = data.split("$")
         self.client_streaming_address = client_streaming_address
@@ -173,9 +172,7 @@ class Server(object):
 
     def receive_msg(self):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
-        print(size)
         data, client_address = self.server_socket.recvfrom(int(size))
-        print(data)
         data = data.decode()
         data = data.split("$")
         self.client_address = client_address
@@ -241,10 +238,10 @@ def get_metadata(my_path):
 
 
 def format_msg(msg):
-    header = str(len(msg))
-    header = header.zfill(HEADER_SIZE)
     if type(msg) == str:
         msg = msg.encode()
+    header = str(len(msg))
+    header = header.zfill(HEADER_SIZE)
     return header.encode(), msg
 
 

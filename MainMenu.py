@@ -1,6 +1,5 @@
 import tkinter as tk
 import tkinter.font
-import Client
 import MainApp
 import tkinter.messagebox
 from Consts import *
@@ -8,13 +7,12 @@ from Consts import *
 
 class Window(tk.Frame):
 
-    def __init__(self, master, manager, client):
+    def __init__(self, master, manager):
         tk.Frame.__init__(self, master)
         self.manager = manager
         self.master = master
         self.username_entry = None
         self.password_entry = None
-        self.client = client
 
         self.init_window()
 
@@ -57,7 +55,7 @@ class Window(tk.Frame):
 
     def add_user(self):
         username, password = self.get_text(None)
-        can_login, msg = self.client.add_user(username, password)
+        can_login, msg = self.manager.client.add_user(username, password)
         if can_login:
             tk.messagebox.showinfo("Ishufi", msg)
             self.switch_window(MainApp.Window)
@@ -70,10 +68,10 @@ class Window(tk.Frame):
     def check_user(self):
         username, password = self.get_text(None)
         username = "itai"
-        password ="123"
-        can_login, msg = self.client.login(username, password)
+        password = "123"
+        can_login, msg = self.manager.client.login(username, password)
         if can_login:
-            self.client.current_user = username
+            self.manager.client.current_user = username
             self.switch_window(MainApp.Window)
         else:
             tk.messagebox.showinfo("Ishufi", msg)

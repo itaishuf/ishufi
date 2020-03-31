@@ -46,7 +46,6 @@ class ConnectionDatabase:
     def add_user(self, new_name, new_password):
         if new_name != "":
             if self.check_if_exist(new_name):
-                print("user does not exist")
                 if new_password != "":
                     self.cursor.execute("insert into users (username, password) values(?, ?)", (new_name, new_password))
                     self.connection.commit()
