@@ -15,7 +15,7 @@ class Client(object):
         self.server_stream_address = (IP, STREAM_PORT)
         self.server_address = (IP, PORT)
         self.p = pyaudio.PyAudio()
-        self.q = queue.Queue()
+        self.song_q = queue.Queue()
         self.play_next_song = False
         self.song_playing = ''
         self.current_user = ''
@@ -148,7 +148,7 @@ class Client(object):
     def check_q(self):
         time.sleep(2)
         while True:
-            next_song = self.q.get()
+            next_song = self.song_q.get()
             if next_song != '':
                 while not self.play_next_song:
                     time.sleep(1)

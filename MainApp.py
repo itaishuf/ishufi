@@ -85,7 +85,7 @@ class Window(tk.Frame):
         self.search_box_artist.bind('<Return>', self.get_text)
 
     def add_to_queue(self):
-        self.manager.client.q.put(self.get_text(None))
+        self.manager.client.song_q.put(self.get_text(None))
 
     def switch_window(self, window):
         self.manager.switch_frame(window)
