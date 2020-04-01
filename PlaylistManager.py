@@ -89,13 +89,13 @@ class Window(tk.Frame):
             self.manager.client.q.put(song)
 
     def fill_pls(self):
-        self.clear_listbox(self.playlists_box)
+        clear_listbox(self.playlists_box)
         self.all_playlists = self.manager.client.get_all_pls_of_user()
         for i in range(len(self.all_playlists)):
             self.playlists_box.insert(i, self.all_playlists[i])
 
     def fill_pl_songs(self, playlist=None):
-        self.clear_listbox(self.songs_listbox)
+        clear_listbox(self.songs_listbox)
         if playlist is None:
             songs = self.manager.client.get_all_songs()
             self.song_label["text"] = "All Downloaded songs"
@@ -155,5 +155,6 @@ class Window(tk.Frame):
         self.quit()
         self.destroy()
 
-    def clear_listbox(self, listbox):
-        listbox.delete(0, listbox.size())
+
+def clear_listbox(listbox):
+    listbox.delete(0, listbox.size())

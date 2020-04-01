@@ -171,11 +171,7 @@ def format_column_list(column_list):
 
 
 def main():
-    """
-    an example insert query for python and sqlite
-    """
-    # opening connection
-    c = ConnectionDatabase()
+    pass
 
 
 if __name__ == '__main__':

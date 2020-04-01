@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 import socket
 import time
@@ -26,29 +25,29 @@ class Client(object):
         queue_t.start()
 
     def play(self):
-        try:
-            metadata, server_address = self.receive_streaming_msg()
-            if metadata == INVALID_REQ.encode():
-                return INVALID_REQ
-            metadata = metadata.decode().split('$')
-            sample_rate = int(metadata[0])
-            channels = int(metadata[1])
-            my_format = int(metadata[2])
-            new_data, server_address = self.receive_streaming_msg()
-            p = pyaudio.PyAudio()
-            stream = p.open(format=my_format, channels=channels, rate=sample_rate,
-                            output=True, frames_per_buffer=4096)
-            start = time.time()
-            while new_data != FINISH:
-                if new_data is not None:
-                    stream.write(new_data)
+        metadata, server_address = self.receive_streaming_msg()
+        if metadata == INVALID_REQ.encode():
+            return INVALID_REQ
+        metadata = metadata.decode().split('$')
+        sample_rate = int(metadata[0])
+        channels = int(metadata[1])
+        my_format = int(metadata[2])
+        new_data, server_address = self.receive_streaming_msg()
+        p = pyaudio.PyAudio()
+        stream = p.open(format=my_format, channels=channels, rate=sample_rate,
+                        output=True, frames_per_buffer=4096)
+        start = time.time()
+        while new_data != FINISH:
+            if new_data is not None:
+                stream.write(new_data)
+            try:
                 new_data, server_address = self.receive_streaming_msg()
-            end = time.time()
-            my_time = end-start
-            print(my_time)
-            return str(my_time)
-        except socket.error as e:
-            print(e)
+            except socket.error as e:
+                print(e)
+        end = time.time()
+        my_time = end-start
+        print(my_time)
+        return str(my_time)
 
     def download_song(self, song):
         to_send = DOWNLOAD_ACTION + "$" + song

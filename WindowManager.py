@@ -10,14 +10,13 @@ class WindowManager(object):
         self.active_frame_class = []
         self.active_frame = []
         self.client = Client.Client()
-        self.switch_frame(MainMenu.Window, BIG)
 
     def switch_frame(self, frame_class, size):
         if self.active_frame_class:
             self.close_frame()
         root = tk.Tk()
         root.geometry(size)
-        app = frame_class(root, self, self.client)
+        frame_class(root, self, self.client)
         self.active_frame.append(root)
         self.active_frame_class.append(frame_class)
         root.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -26,7 +25,7 @@ class WindowManager(object):
     def open_frame(self, frame_class, size):
         root = tk.Tk()
         root.geometry(size)
-        app = frame_class(root, self, self.client)
+        frame_class(root, self, self.client)
         self.active_frame.append(root)
         self.active_frame_class.append(frame_class)
         root.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -46,6 +45,7 @@ class WindowManager(object):
 
 def main():
     wm = WindowManager()
+    wm.switch_frame(MainMenu.Window, BIG)
 
 
 if __name__ == '__main__':

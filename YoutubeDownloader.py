@@ -2,7 +2,6 @@
 import urllib.request
 import urllib.parse
 import re
-import wave
 import os
 import subprocess
 from Consts import *
@@ -19,7 +18,8 @@ class YoutubeDownloader(object):
     def ur_lib(self):
         query_string = urllib.parse.urlencode({"search_query": self.name})
         html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
-        search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
+        full_query = r'href=\"\/watch\?v=(.{11})'
+        search_results = re.findall(full_query, html_content.read().decode())
         top_result = search_results[0]
         return top_result
 

@@ -1,11 +1,10 @@
-import time
 import tkinter as tk
 import tkinter.font
 from tkinter import messagebox
 
 from PIL import Image, ImageTk
 
-import MakePlaylist
+import PlaylistManager
 from Consts import *
 
 
@@ -95,7 +94,7 @@ class Window(tk.Frame):
         self.manager.close_frame()
 
     def make_playlist(self):
-        self.manager.open_frame(MakePlaylist.Window, BIG)
+        self.manager.open_frame(PlaylistManager.Window, BIG)
 
     def next_song(self):
         self.manager.client.send_message(STOP)
@@ -108,17 +107,6 @@ class Window(tk.Frame):
         self.manager.client.song_stack.pop()
         print("last song", song)
         self.play_song(song)
-
-    # def check_q(self):
-    #    time.sleep(2)
-    #    while True:
-    #        next_song = self.client.q.get()
-    #        if next_song != '':
-    #            while not self.client.play_next_song:
-    #                time.sleep(0.5)
-    #            print('adding', next_song)
-    #            self.play_song(next_song)
-    #        time.sleep(1)
 
     def forward(self):
         self.manager.client.forward()

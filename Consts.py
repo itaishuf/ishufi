@@ -59,22 +59,13 @@ SMALL = '300x225'
 
 """
 features
-הצפנה לסיסמאות
-ui יפה
-
+ui יפה + images
+help page
+better choose action
 
 
 bugs
 cant play after download
 cant do anything while downloading
-msg send on a datagram was larger then the internal msg buffer or some other network limit- happens randomly
 songs playing too fast/slow
-
-
-
-code
-simplify and document uses of constants
-documentation
-better choose action
-more efficient socket action messages
 """
