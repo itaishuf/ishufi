@@ -8,6 +8,7 @@ import queue
 import threading
 import pyaudio
 import wave
+import glob
 from YoutubeDownloader import YoutubeDownloader
 from Consts import *
 
@@ -118,6 +119,19 @@ class Server(object):
         if msg == SUCCESS:
             self.db.add_new_song(song)
         self.send_message(msg)
+
+    def update_db(self):
+        songs = self.db.get_all_songs()
+        for song in songs:
+            if choose_song(song) == ERROR:
+                self.db.delete_song(song)
+        files = []
+        for song in glob.glob("songs\*.wav"):
+            to_append = song.split('\\')[1][:-4]
+            files.append(to_append)
+        for song in files:
+            if song not in songs:
+                self.db.add_new_song(song)
 
     def stream_song(self, path, e):
         if path == ERROR:
@@ -247,6 +261,7 @@ def format_msg(msg):
 
 def main():
     server = Server(IP, PORT, STREAM_PORT)
+    server.update_db()
     server.handle_client()
 
 

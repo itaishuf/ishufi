@@ -16,7 +16,19 @@ class Window(tk.Frame):
         self.master = master
         self.search_box = None
         self.search_box_artist = None
-        self.custom_button = None
+        self.play_button = None
+
+        load = Image.open(r"images\play1.png")
+        img = load.resize((75, 75), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(img)
+
+        self.play_img = render
+
+        load = Image.open(r"images\pause3.png")
+        img = load.resize((75, 75), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(img)
+
+        self.pause_img = render
 
         self.init_window()
 
@@ -32,42 +44,42 @@ class Window(tk.Frame):
         sign_in_txt.place(relx=0.3, rely=0.06, relwidth=0.4)
 
         quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=WHITE)
-        quit_button.place(relx=0.4, rely=0.85, relwidth=0.2)
+        quit_button.place(relx=0.425, rely=0.9, relwidth=0.15)
 
         download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=WHITE)
-        download_button.place(relx=0.4, rely=0.75, relwidth=0.2)
+        download_button.place(relx=0.425, rely=0.8, relwidth=0.15)
 
-        load = Image.open(r"images\button8.png")
+        add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
+        add_q_button.place(relx=0.2, rely=0.8, relwidth=0.2)
+
+        make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=WHITE)
+        make_playlist_button.place(relx=0.6, rely=0.8, relwidth=0.2)
+
+        self.play_button = tk.Button(self, image=self.play_img, command=self.pick_song, bg=GREEN)
+        self.play_button.image = self.play_img
+        self.play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
+
+        forward_button = tk.Button(self, text="forward 10s", command=self.forward, bg=WHITE)
+        forward_button.place(relx=0.725, rely=0.55, relwidth=0.15)
+
+        backward_button = tk.Button(self, text="backward 10s", command=self.backward, bg=WHITE)
+        backward_button.place(relx=0.125, rely=0.55, relwidth=0.15)
+
+        load = Image.open(r"images\next1.png")
         img = load.resize((50, 50), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        play_button = tk.Button(self, image=render, command=self.pick_song, bg=GREEN)
-        play_button.image = render
-        play_button.place(relx=0.45, rely=0.55, relwidth=0.1)
+        next_song_button = tk.Button(self, image=render, command=self.next_song, bg=WHITE)
+        next_song_button.image = render
+        next_song_button.place(relx=0.6, rely=0.55, relwidth=0.1)
 
-        pause_button = tk.Button(self, text="Pause", command=self.pause, bg=WHITE)
-        pause_button.place(relx=0.7, rely=0.55, relwidth=0.15)
+        load = Image.open(r"images\last1.png")
+        img = load.resize((50, 50), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(img)
 
-        add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
-        add_q_button.place(relx=0.1, rely=0.55, relwidth=0.2)
-
-        make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=WHITE)
-        make_playlist_button.place(relx=0.1, rely=0.65, relwidth=0.2)
-
-        un_pause_button = tk.Button(self, text="continue", command=self.un_pause, bg=WHITE)
-        un_pause_button.place(relx=0.7, rely=0.65, relwidth=0.15)
-
-        forward_button = tk.Button(self, text="forward 10s", command=self.forward, bg=WHITE)
-        forward_button.place(relx=0.78, rely=0.75, relwidth=0.15)
-
-        next_song_button = tk.Button(self, text="next song", command=self.next_song, bg=WHITE)
-        next_song_button.place(relx=0.78, rely=0.85, relwidth=0.15)
-
-        last_song_button = tk.Button(self, text="last song", command=self.last_song, bg=WHITE)
-        last_song_button.place(relx=0.62, rely=0.85, relwidth=0.15)
-
-        backward_button = tk.Button(self, text="backward 10s", command=self.backward, bg=WHITE)
-        backward_button.place(relx=0.62, rely=0.75, relwidth=0.15)
+        last_song_button = tk.Button(self, image=render, command=self.last_song, bg=WHITE)
+        last_song_button.image = render
+        last_song_button.place(relx=0.3, rely=0.55, relwidth=0.1)
 
         song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
         song_txt.place(relx=0.3, rely=0.22, relwidth=0.4)
@@ -143,9 +155,19 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
+        self.change_img()
         msg = self.manager.client.play_song_top(name)
         if msg is not None:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
+
+    def change_img(self):
+        if self.manager.client.song_playing == '':
+            self.play_button["image"] = self.pause_img
+        elif self.manager.client.paused:
+            self.play_button["image"] = self.pause_img
+        else:
+            self.play_button["image"] = self.play_img
+
 
     def call_manager_exit(self):
         self.manager.client.close_com()

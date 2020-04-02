@@ -110,6 +110,10 @@ class ConnectionDatabase:
         self.cursor.executescript(command)
         self.connection.commit()
 
+    def delete_song(self, song):
+        command = "DELETE from playlists WHERE songs='%s'" % song
+        self.execute(command)
+
     def get_column_list(self, table):
         command = "PRAGMA table_info(%s)" % table
         return self.execute(command, offset=1)
@@ -155,6 +159,11 @@ class ConnectionDatabase:
         command = "Select songs from playlists"
         return self.execute(command)
 
+    def get_all_pls(self):
+        pls = self.get_column_list("playlists")
+        pls = pls[2:]
+        return pls
+
     def get_all_pls_of_user(self, username):
         my_id = self.get_user_id(username)
         command = "SELECT playlist FROM user_to_list WHERE user='%s'" % my_id
@@ -171,7 +180,8 @@ def format_column_list(column_list):
 
 
 def main():
-    pass
+    c = ConnectionDatabase()
+    c.get_all_pls()
 
 
 if __name__ == '__main__':

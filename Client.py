@@ -17,6 +17,7 @@ class Client(object):
         self.p = pyaudio.PyAudio()
         self.song_q = queue.Queue()
         self.play_next_song = False
+        self.paused = False
         self.song_playing = ''
         self.current_user = ''
 
@@ -120,13 +121,22 @@ class Client(object):
         song = lst[0]
         q = lst[1]
         if self.song_playing == song:
-            return
+            print("playing same song")
+            if not self.paused:
+                self.paused = True
+                self.pause()
+                return
+            else:
+                self.paused = False
+                self.un_pause()
+                return
         elif self.song_playing != "":
             self.send_message(STOP)
             time.sleep(0.4)
         self.song_playing = song
         to_send = STREAM_ACTION + "$" + song
         self.send_streaming_message(to_send)
+        print('playing', song)
         msg = self.play()
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
@@ -135,7 +145,6 @@ class Client(object):
 
     def play_song_top(self, name):
         self.song_stack.append(name)
-        print('playing', name)
         return_queue = queue.Queue()
         t_play = threading.Thread(target=self.play_song_thread, args=((name, return_queue),))
         t_play.start()
