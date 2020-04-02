@@ -14,7 +14,7 @@ class Window(tk.Frame):
         self.selected_songs = []
         self.chosen_pl = ""
         self.playlist_name = None
-        self.all_playlists = manager.client.get_all_pls_of_user()
+        self.all_playlists = None
         self.songs_listbox = None
         self.my_lists = None
         self.song_label = None
@@ -83,10 +83,11 @@ class Window(tk.Frame):
         if self.chosen_pl == "":
             return
         songs = self.manager.client.get_songs_in_pl(self.chosen_pl)
-        songs = random.shuffle(songs)
+        random.shuffle(songs)
+        print(songs)
         msg = self.manager.client.play_song_top(songs[0])
         for song in songs[1:]:
-            self.manager.client.q.put(song)
+            self.manager.client.song_q.put(song)
 
     def fill_pls(self):
         clear_listbox(self.playlists_box)
