@@ -140,7 +140,7 @@ class Client(object):
         msg = self.play()
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
-        self.song_playing = ""
+        self.song_playing = ''
         self.play_next_song = True
 
     def play_song_top(self, name):

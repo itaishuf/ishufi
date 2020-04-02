@@ -3,6 +3,7 @@ import tkinter.font
 from tkinter import messagebox
 
 from PIL import Image, ImageTk
+import threading
 
 import PlaylistManager
 from Consts import *
@@ -151,6 +152,7 @@ class Window(tk.Frame):
     def pick_song(self):
         name = self.get_text(None)
         if name == ERROR:
+            self.change_img(mode="play")
             return
         self.play_song(name)
 
@@ -159,15 +161,24 @@ class Window(tk.Frame):
         msg = self.manager.client.play_song_top(name)
         if msg is not None:
             tk.messagebox.showinfo("Ishufi", "song doesnt exist")
+            self.change_img(mode="play")
 
-    def change_img(self):
+    def change_img(self, mode=""):
+        if mode == "pause":
+            self.play_button["image"] = self.pause_img
+            return
+        if mode == "play":
+            self.play_button["image"] = self.play_img
+            return
         if self.manager.client.song_playing == '':
             self.play_button["image"] = self.pause_img
+            return
         elif self.manager.client.paused:
             self.play_button["image"] = self.pause_img
+            return
         else:
             self.play_button["image"] = self.play_img
-
+            return
 
     def call_manager_exit(self):
         self.manager.client.close_com()

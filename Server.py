@@ -231,11 +231,14 @@ def get_byte_num(path):
     return (int(sample) * int(my_format) * int(channels)*15) / 8
 
 
-def choose_song(name):
-    name = name.split('@')[0]
+def choose_song(my_name):
+    my_name = my_name.split('@')[0]
     path = ''
     for filename in os.listdir(str(Path.cwd())+'/songs'):
-        if filename.endswith(".wav") and name in filename:
+        name = filename.split('\\')[-1]
+        name = name.split('.')[0]
+        name = name.split('@')[0]
+        if filename.endswith(".wav") and my_name == name:
             path = str(Path.cwd()) + r'\songs\%s' % filename
     if os.path.exists(path):
         return path
