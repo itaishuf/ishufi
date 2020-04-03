@@ -3,7 +3,6 @@ import tkinter.font
 from tkinter import messagebox
 
 from PIL import Image, ImageTk
-import threading
 
 import PlaylistManager
 from Consts import *
