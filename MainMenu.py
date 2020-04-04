@@ -20,6 +20,9 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
+        """
+        initializes the window with all widgets and buttons
+        """
         self.master.title("Ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
@@ -66,11 +69,17 @@ class Window(tk.Frame):
         self.password_entry.bind('<Return>', self.get_text)
 
     def get_text(self, event):
+        """
+        gets the text from both entry boxes
+        """
         username = self.username_entry.get()
         password = self.password_entry.get()
         return username, password
 
     def add_user(self):
+        """
+        adds a new user to the database' if the user already exists it shows a message
+        """
         username, password = self.get_text(None)
         can_login, msg = self.manager.client.add_user(username, password)
         if can_login:
@@ -80,12 +89,17 @@ class Window(tk.Frame):
             tk.messagebox.showinfo("Ishufi", msg)
 
     def call_manager_exit(self):
+        """
+        calls the manager exit function
+        """
         self.manager.close_frame()
 
     def check_user(self):
+        """
+        checks that the data that was submitted is correct, lets the user pass if it is
+         and if it isnt it shows a message
+        """
         username, password = self.get_text(None)
-        username = "itai"
-        password = "123"
         can_login, msg = self.manager.client.login(username, password)
         if can_login:
             self.manager.client.current_user = username
@@ -94,8 +108,14 @@ class Window(tk.Frame):
             tk.messagebox.showinfo("Ishufi", msg)
 
     def switch_window(self, window):
+        """
+        opens the main app window and closes this window
+        """
         self.manager.switch_frame(window, BIG)
 
     def exit_window(self):
+        """
+        closes the window
+        """
         self.quit()
         self.destroy()

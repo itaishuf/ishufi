@@ -34,6 +34,10 @@ class Server(object):
         self.skip_q = queue.Queue()
 
     def choose_action(self, action, params, event):
+        """
+        chooses the correct function to call according to the actions dictionary
+        checks if the parameters are correct
+        """
         if REQ_AND_PARAMS.get(action) != len(params):
             print("invalid request")
             self.send_message(INVALID_REQ)
@@ -75,39 +79,60 @@ class Server(object):
             self.delete_pl(params[0], params[1])
 
     def remove_song_from_pl(self, song, pl):
+        """
+        removes a song from a playlist
+        """
         to_send = self.db.remove_song_from_pl(song, pl)
         if not to_send:
             to_send = SUCCESS
         self.send_message(to_send)
 
     def add_song_to_pl(self, song, pl):
+        """
+        adds a song to a playlist
+        """
         to_send = self.db.add_song_to_pl(song, pl)
         if not to_send:
             to_send = SUCCESS
         self.send_message(to_send)
 
     def delete_pl(self, user, playlist):
+        """
+        deleted a playlist
+        """
         to_send = self.db.delete_pl(playlist)
         if to_send is None:
             self.send_message(ERROR)
         self.send_message(SUCCESS)
 
     def get_all_songs(self):
+        """
+        gets all songs in the database
+        """
         to_send = self.db.get_all_songs()
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 
     def get_all_pls_of_user(self, username):
+        """
+        gets all playlists of a certain user
+        """
         to_send = self.db.get_all_pls_of_user(username)
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 
     def get_all_songs_in_pl(self, playlist):
+        """
+        gets a ll songs in a certain playlist
+        """
         to_send = self.db.get_songs(playlist)
         to_send = '$'.join(to_send)
         self.send_message(to_send)
 
     def create_new_pl(self, params):
+        """
+        creates a new playlist with the given songs and links it the the given user
+        """
         name = params[1]
         user = params[0]
         songs = params[2].split('&')
@@ -115,6 +140,9 @@ class Server(object):
         self.send_message(msg)
 
     def download_song(self, song):
+        """
+        downloads a song
+        """
         song = song.replace('_', ' ')
         downloader = YoutubeDownloader(song)
         msg = downloader.download()
@@ -123,6 +151,9 @@ class Server(object):
         self.send_message(msg)
 
     def update_db(self):
+        """
+        makes sure the database holds only all the songs that are saved on the server
+        """
         songs = self.db.get_all_songs()
         for song in songs:
             if choose_song(song) == ERROR:
@@ -136,21 +167,33 @@ class Server(object):
                 self.db.add_new_song(song)
 
     def stream_song(self, path, e):
+        """
+        sends the data from a song file chosen by the pick song method
+        manages skips and pauses
+        """
         if path == ERROR:
             self.send_streaming_message(INVALID_REQ)
             return
+        # sends metadata
         sample_rate, channels, my_format = get_metadata(path)
         to_send = sample_rate + "$" + channels + '$' + my_format
         skip_amount = get_byte_num(path)
         print('to send', to_send)
+
+        # sends a chunk each iteration of the loop
         self.send_streaming_message(to_send)
         with open(path, 'rb') as song:
             data = song.read(MSG_SIZE)
             self.send_streaming_message(data)
             while data != EMPTY_MSG:
                 data = song.read(MSG_SIZE)
+
+                # if the user wanted to pause the function will raise a thread event
+                #  and stop until instructed to continue from outside the thread
                 if self.pause:
                     e.wait()
+
+                # checks if the song should stop playing/ go backwards/forwards
                 if not self.skip_q.empty():
                     msg = self.skip_q.get()
                     if msg == FORWARD_ACTION:
@@ -161,19 +204,29 @@ class Server(object):
                         print('stopping')
                         self.send_streaming_message(FINISH)
                         return
+                # sends the chunk and pauses
                 self.send_streaming_message(data)
                 time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
             self.send_streaming_message(FINISH)
 
     def login_check(self, username, password):
+        """
+        checks if the username and password are correct
+        """
         can_login, msg = self.db.check_login(username, password)
         self.send_message(str(can_login) + "$" + msg)
 
     def add_check(self, username, password):
+        """
+        adds a new user
+        """
         can_login, msg = self.db.add_user(username, password)
         self.send_message(str(can_login) + "$" + msg)
 
     def receive_streaming_msg(self):
+        """
+        receives a message from the client on the streaming socket
+        """
         size, client_streaming_address = self.server_socket_streaming.recvfrom(HEADER_SIZE)
         data, client_streaming_address = self.server_socket_streaming.recvfrom(int(size))
         data = data.decode()
@@ -182,11 +235,17 @@ class Server(object):
         return data
 
     def send_streaming_message(self, data):
+        """
+        sends a message to the client on the streaming socket
+        """
         header, data = format_msg(data)
         self.server_socket_streaming.sendto(header, self.client_streaming_address)
         self.server_socket_streaming.sendto(data, self.client_streaming_address)
 
     def receive_msg(self):
+        """
+        receives a message from the client on the regular socket
+        """
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
         data, client_address = self.server_socket.recvfrom(int(size))
         data = data.decode()
@@ -195,11 +254,17 @@ class Server(object):
         return data
 
     def send_message(self, data):
+        """
+        sends a message to the client on the regular socket
+        """
         header, data = format_msg(data)
         self.server_socket.sendto(header, self.client_address)
         self.server_socket.sendto(data, self.client_address)
 
     def handle_client(self):
+        """
+        calls the handle methods for both sockets
+        """
         e = threading.Event()
         reg_t = threading.Thread(target=self.handle_reg_client, args=(e,))
         stream_t = threading.Thread(target=self.handle_stream_client, args=(e,))
@@ -207,6 +272,9 @@ class Server(object):
         stream_t.start()
 
     def handle_reg_client(self, event):
+        """
+        handles the regular socket
+        """
         try:
             while True:
                 client_req = self.receive_msg()
@@ -215,6 +283,9 @@ class Server(object):
             print(e)
 
     def handle_stream_client(self, event):
+        """
+        handles the streaming socket
+        """
         try:
             while True:
                 client_req = self.receive_streaming_msg()
@@ -224,16 +295,25 @@ class Server(object):
 
 
 def song_check(song):
+    """
+    checks if a song is valid
+    """
     msg = choose_song(song)
     return msg != ERROR
 
 
 def get_byte_num(path):
+    """
+    gets the number of bytes that represent 10 seconds in the song
+    """
     sample, channels, my_format = get_metadata(path)
     return (int(sample) * int(my_format) * int(channels)*15) / 8
 
 
 def choose_song(my_name):
+    """
+    chooses the file of the requested song and checks if its valid
+    """
     my_name = my_name.split('@')[0]
     path = ''
     for filename in os.listdir(str(Path.cwd())+'/songs'):
@@ -249,6 +329,9 @@ def choose_song(my_name):
 
 
 def get_metadata(my_path):
+    """
+    gets the metadata of the requested file
+    """
     with wave.open(my_path, "rb") as wave_file:
         frame_rate = wave_file.getframerate()
         channels = wave_file.getnchannels()
@@ -257,6 +340,9 @@ def get_metadata(my_path):
 
 
 def format_msg(msg):
+    """
+    encodes the message and returns its length and the message
+    """
     if type(msg) == str:
         msg = msg.encode()
     header = str(len(msg))

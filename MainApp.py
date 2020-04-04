@@ -12,27 +12,30 @@ class Window(tk.Frame):
 
     def __init__(self, master, manager):
         tk.Frame.__init__(self, master)
-        self.manager = manager
-        self.master = master
-        self.search_box = None
-        self.search_box_artist = None
-        self.play_button = None
+        self.manager = manager  # reference to the manager
+        self.master = master  # tkinter root
+        self.search_box = None  # song search box declaration
+        self.search_box_artist = None  # artist search box declaration
+        self.play_button = None  # play button declaration
 
+        # sets the play button image up
         load = Image.open(r"images\play1.png")
         img = load.resize((75, 75), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
-
         self.play_img = render
 
+        # sets the pause button image up
         load = Image.open(r"images\pause3.png")
         img = load.resize((75, 75), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
-
         self.pause_img = render
 
         self.init_window()
 
     def init_window(self):
+        """
+        initializes the window with all widgets and buttons
+        """
         self.master.title("ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
@@ -109,45 +112,80 @@ class Window(tk.Frame):
         self.search_box_artist.bind('<Return>', self.get_text)
 
     def help(self):
+        """
+        opens a window with explanations about how to operate the ui
+        """
         pass
 
     def add_to_queue(self):
+        """
+        adds the current song to the queue
+        """
         self.manager.client.song_q.put(self.get_text(None))
 
     def switch_window(self, window):
+        """
+        switches window
+        """
         self.manager.switch_frame(window)
 
     def manager_close_frame(self):
+        """
+        closes this window
+        """
         self.manager.close_frame()
 
     def make_playlist(self):
+        """
+        opens the playlist manager screen
+        """
         self.manager.open_frame(PlaylistManager.Window, BIG)
 
     def next_song(self):
+        """
+        pushes a message to move to the next song in the queue
+        """
         self.manager.client.send_message(STOP)
 
     def last_song(self):
+        """
+        starts playing the last song that was played
+        """
         if len(self.manager.client.song_stack) == 0:
             return
         self.manager.client.song_stack.pop()
         song = self.manager.client.song_stack[-1]
         self.manager.client.song_stack.pop()
-        print("last song", song)
         self.play_song(song)
 
     def forward(self):
+        """
+        goes forward 10 seconds in the song
+        """
         self.manager.client.forward()
 
     def backward(self):
+        """
+        goes forward 10 seconds in the song
+        """
         self.manager.client.backward()
 
     def pause(self):
+        """
+        pauses the current song
+        """
         self.manager.client.pause()
 
     def un_pause(self):
+        """
+        resumes the current song
+        """
         self.manager.client.un_pause()
 
     def get_text(self, event):
+        """
+        gets the text from both entry boxes, puts underscores instead of spaces and separates with @
+        """
         song = self.search_box.get().replace(' ', '_')
         artist = self.search_box_artist.get().replace(' ', '_')
         if song == "":
@@ -157,6 +195,10 @@ class Window(tk.Frame):
         return to_send
 
     def download_new_song(self):
+        """
+        downloads the string that the user has  typed
+        :return:
+        """
         txt = self.get_text(None)
         if txt == ERROR:
             return
@@ -164,6 +206,9 @@ class Window(tk.Frame):
         tk.messagebox.showinfo("Ishufi", msg)
 
     def pick_song(self):
+        """
+        song player highest level wrapper
+        """
         name = self.get_text(None)
         if name == ERROR:
             self.change_img(mode="play")
@@ -171,6 +216,9 @@ class Window(tk.Frame):
         self.play_song(name)
 
     def play_song(self, name):
+        """
+        calls the client function to start the song playing process
+        """
         self.change_img()
         msg = self.manager.client.play_song_top(name)
         if msg is not None:
@@ -178,6 +226,9 @@ class Window(tk.Frame):
             self.change_img(mode="play")
 
     def change_img(self, mode=""):
+        """
+        checks whether the play button should show a pause image or a play image and updates the image
+        """
         if mode == "pause":
             self.play_button["image"] = self.pause_img
             return
@@ -195,9 +246,15 @@ class Window(tk.Frame):
             return
 
     def call_manager_exit(self):
+        """
+        calls the manager exit function
+        """
         self.manager.client.close_com()
         self.manager.close_frame()
 
     def exit_window(self):
+        """
+        exits the window
+        """
         self.destroy()
         self.quit()

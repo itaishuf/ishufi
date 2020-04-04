@@ -25,6 +25,9 @@ class Window(tk.Frame):
         self.init_window()
 
     def init_window(self):
+        """
+        initializes the window with all widgets and buttons
+        """
         self.master.title("Ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
@@ -75,18 +78,30 @@ class Window(tk.Frame):
         self.playlists_box.bind('<<ListboxSelect>>', self.choose_pl)
 
     def get_text(self, event):
+        """
+        gets the text from both entry boxes, puts underscores instead of spaces
+        """
         name = self.playlist_name.get().replace(' ', '_')
         if name == "":
             return ERROR
         return name
 
     def help(self):
+        """
+        opens a window with explanations about how to operate the ui
+        """
         pass
 
     def delete_pl(self):
+        """
+        deletes the chosen playlist
+        """
         msg = self.manager.client.delete_pl(self.chosen_pl)
 
     def play_pl(self):
+        """
+        plays the chosen playlist in shuffled order
+        """
         if self.chosen_pl == "":
             return
         songs = self.manager.client.get_songs_in_pl(self.chosen_pl)
@@ -97,12 +112,19 @@ class Window(tk.Frame):
             self.manager.client.song_q.put(song)
 
     def fill_pls(self):
+        """
+        fills the playlist listbox with all playlists
+        """
         clear_listbox(self.playlists_box)
         self.all_playlists = self.manager.client.get_all_pls_of_user()
         for i in range(len(self.all_playlists)):
             self.playlists_box.insert(i, self.all_playlists[i])
 
     def fill_pl_songs(self, playlist=None):
+        """
+        fills the songs listbox with all songs if no playlist is given
+        or with the songs in a certain playlist if it is given to the function
+        """
         clear_listbox(self.songs_listbox)
         if playlist is None:
             songs = self.manager.client.get_all_songs()
@@ -113,12 +135,19 @@ class Window(tk.Frame):
             self.songs_listbox.insert(i, songs[i])
 
     def choose_songs(self):
+        """
+        gets all the chosen songs from the songs listbox
+        """
         self.selected_songs = []
         indexes = self.songs_listbox.curselection()
         for index in indexes:
             self.selected_songs.append(self.songs_listbox.get(index))
 
     def choose_pl(self, event=None):
+        """
+        fills the songs listbox and updates the chosen playlist variable whenever a playlist is clicked on
+        by the user.
+        """
         try:
             index = self.playlists_box.curselection()
             self.chosen_pl = self.playlists_box.get(index)
@@ -129,6 +158,9 @@ class Window(tk.Frame):
             print(e)
 
     def create_pl(self):
+        """
+        gets the name from the entry box and the songs from the listbox and creates a new playlist with them
+        """
         name = self.get_text(None)
         if name == ERROR:
             return
@@ -140,6 +172,9 @@ class Window(tk.Frame):
         self.master.lift()
 
     def remove_song_from_pl(self):
+        """
+        removes the chosen song from the chosen playlist
+        """
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
         if self.selected_songs or self.chosen_pl is None:
@@ -147,6 +182,9 @@ class Window(tk.Frame):
             print(msg)
 
     def add_song_to_pl(self):
+        """
+        adds the chosen song to the chosen playlist
+        """
         self.songs_listbox.config(selectmode=tk.SINGLE)
         self.choose_songs()
         if self.selected_songs or self.chosen_pl is None:
@@ -154,12 +192,18 @@ class Window(tk.Frame):
             print(msg)
 
     def call_manager_exit(self):
+        """
+        calls the manager exit function
+        """
         self.manager.close_frame()
 
     def switch_window(self, window):
         self.manager.switch_frame(window)
 
     def exit_window(self):
+        """
+        exits the window
+        """
         self.quit()
         self.destroy()
 
