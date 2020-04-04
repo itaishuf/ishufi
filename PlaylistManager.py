@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.font
 import tkinter.messagebox
 import random
+from PIL import Image, ImageTk
 from Consts import *
 
 
@@ -27,16 +28,16 @@ class Window(tk.Frame):
         self.master.title("Ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        frame = tk.Frame(master=self, bg=GREEN)
+        frame = tk.Frame(master=self, bg=LIGHT_BLUE)
         frame.pack(fill=tk.BOTH, expand=1)
 
-        create_pl_txt = tk.Label(self, text="enter playlist name", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        create_pl_txt = tk.Label(self, text="enter playlist name", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         create_pl_txt.place(relx=0.65, rely=0.65, relwidth=0.3)
 
-        self.song_label = tk.Label(self, text="All Downloaded Songs", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        self.song_label = tk.Label(self, text="All Downloaded Songs", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         self.song_label.place(relx=0.65, rely=0.05, relwidth=0.3)
 
-        self.pl_label = tk.Label(self, text="My playlists", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        self.pl_label = tk.Label(self, text="My playlists", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         self.pl_label.place(relx=0.05, rely=0.05, relwidth=0.3)
 
         self.playlist_name = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
@@ -75,6 +76,9 @@ class Window(tk.Frame):
         if name == "":
             return ERROR
         return name
+
+    def help(self):
+        pass
 
     def delete_pl(self):
         msg = self.manager.client.delete_pl(self.chosen_pl)

@@ -21,14 +21,14 @@ class Window(tk.Frame):
         self.master.title("Ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        frame = tk.Frame(master=self, bg=GREEN)
+        frame = tk.Frame(master=self, bg=LIGHT_BLUE)
         frame.pack(fill=tk.BOTH, expand=1)
         self.master.resizable(0, 0)
         load = Image.open(r"images\logo.png")
         img = load.resize((400, 450), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        background = tk.Label(self, image=render, bg=GREEN)
+        background = tk.Label(self, image=render, bg=LIGHT_BLUE)
         background.image = render
         background.place(x=200, rely=0)
 
@@ -41,16 +41,16 @@ class Window(tk.Frame):
         add_user_button = tk.Button(self, text="Register", command=self.add_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         add_user_button.place(relx=0.1, rely=0.55, relwidth=0.13)
 
-        username_txt = tk.Label(self, text="Username", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        username_txt = tk.Label(self, text="Username", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         username_txt.place(relx=0.08, rely=0.18, relwidth=0.2)
 
-        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg=PURPLE, bg=GREEN)
+        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg=PURPLE, bg=LIGHT_BLUE)
         sign_in_txt.place(relx=0.08, rely=0.05, relwidth=0.2)
 
         self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
         self.username_entry.place(relx=0.05, rely=0.25, relwidth=0.26)
 
-        password_txt = tk.Label(self, text="Password", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        password_txt = tk.Label(self, text="Password", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         password_txt.place(relx=0.08, rely=0.33, relwidth=0.2)
 
         self.password_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), show='$', bg=WHITE)

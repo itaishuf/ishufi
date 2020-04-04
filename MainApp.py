@@ -36,40 +36,48 @@ class Window(tk.Frame):
         self.master.title("ishufi")
         self.pack(fill=tk.BOTH, expand=1)
 
-        frame = tk.Frame(master=self, bg=GREEN)
+        frame = tk.Frame(master=self, bg=LIGHT_BLUE)
         frame.pack(fill=tk.BOTH, expand=1)
 
-        sign_in_txt = tk.Label(self, text="Search", font=tk.font.Font(family='tahoma', size='20', weight="bold"),
-                               fg=PURPLE, bg=GREEN)
-        sign_in_txt.place(relx=0.3, rely=0.06, relwidth=0.4)
+        load = Image.open(r"images\help1.jpg")
+        img = load.resize((25, 25), Image.ANTIALIAS)
+        render = ImageTk.PhotoImage(img)
 
-        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=WHITE)
+        help_button = tk.Button(self, image=render, command=self.help, bg=LIGHT_LIGHT_BLUE)
+        help_button.image = render
+        help_button.place(relx=0.02, rely=0.02)
+
+        search_txt = tk.Label(self, text="Search", font=tk.font.Font(family='tahoma', size='20', weight="bold"),
+                              fg=PURPLE, bg=LIGHT_BLUE)
+        search_txt.place(relx=0.3, rely=0.06, relwidth=0.4)
+
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, bg=LIGHT_LIGHT_BLUE)
         quit_button.place(relx=0.425, rely=0.9, relwidth=0.15)
 
-        download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=WHITE)
+        download_button = tk.Button(self, text="Download", command=self.download_new_song, bg=LIGHT_LIGHT_BLUE)
         download_button.place(relx=0.425, rely=0.8, relwidth=0.15)
 
-        add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=WHITE)
+        add_q_button = tk.Button(self, text="Add to queue", command=self.add_to_queue, bg=LIGHT_LIGHT_BLUE)
         add_q_button.place(relx=0.2, rely=0.8, relwidth=0.2)
 
-        make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=WHITE)
+        make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=LIGHT_LIGHT_BLUE)
         make_playlist_button.place(relx=0.6, rely=0.8, relwidth=0.2)
 
-        self.play_button = tk.Button(self, image=self.play_img, command=self.pick_song, bg=GREEN)
+        self.play_button = tk.Button(self, image=self.play_img, command=self.pick_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
         self.play_button.image = self.play_img
         self.play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
 
-        forward_button = tk.Button(self, text="forward 10s", command=self.forward, bg=WHITE)
+        forward_button = tk.Button(self, text="forward 10s", command=self.forward, bg=LIGHT_LIGHT_BLUE)
         forward_button.place(relx=0.725, rely=0.55, relwidth=0.15)
 
-        backward_button = tk.Button(self, text="backward 10s", command=self.backward, bg=WHITE)
+        backward_button = tk.Button(self, text="backward 10s", command=self.backward, bg=LIGHT_LIGHT_BLUE)
         backward_button.place(relx=0.125, rely=0.55, relwidth=0.15)
 
         load = Image.open(r"images\next1.png")
         img = load.resize((50, 50), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        next_song_button = tk.Button(self, image=render, command=self.next_song, bg=WHITE)
+        next_song_button = tk.Button(self, image=render, command=self.next_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
         next_song_button.image = render
         next_song_button.place(relx=0.6, rely=0.55, relwidth=0.1)
 
@@ -77,11 +85,11 @@ class Window(tk.Frame):
         img = load.resize((50, 50), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        last_song_button = tk.Button(self, image=render, command=self.last_song, bg=WHITE)
+        last_song_button = tk.Button(self, image=render, command=self.last_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
         last_song_button.image = render
         last_song_button.place(relx=0.3, rely=0.55, relwidth=0.1)
 
-        song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=GREEN)
+        song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         song_txt.place(relx=0.3, rely=0.22, relwidth=0.4)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
@@ -89,12 +97,15 @@ class Window(tk.Frame):
         self.search_box.bind('<Return>', self.get_text)
 
         artist_txt = tk.Label(self, text="Artist", font=tk.font.Font(family="century gothic", size="11", weight="bold"),
-                              bg=GREEN)
+                              bg=LIGHT_BLUE)
         artist_txt.place(relx=0.3, rely=0.38, relwidth=0.4)
 
         self.search_box_artist = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
         self.search_box_artist.place(relx=0.3, rely=0.45, relwidth=0.4)
         self.search_box_artist.bind('<Return>', self.get_text)
+
+    def help(self):
+        pass
 
     def add_to_queue(self):
         self.manager.client.song_q.put(self.get_text(None))
