@@ -1,8 +1,10 @@
 import tkinter as tk
 import tkinter.font
-import MainApp
 import tkinter.messagebox
+
 from PIL import Image, ImageTk
+
+import MainApp
 from Consts import *
 
 
@@ -32,25 +34,31 @@ class Window(tk.Frame):
         background.image = render
         background.place(x=200, rely=0)
 
-        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
+        quit_button = tk.Button(self, text="Quit", command=self.call_manager_exit,
+                                font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         quit_button.place(relx=0.1, rely=0.75, relwidth=0.13)
 
-        log_in_button = tk.Button(self, text="Log In", command=self.check_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
+        log_in_button = tk.Button(self, text="Log In", command=self.check_user,
+                                  font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         log_in_button.place(relx=0.1, rely=0.65, relwidth=0.13)
 
-        add_user_button = tk.Button(self, text="Register", command=self.add_user, font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
+        add_user_button = tk.Button(self, text="Register", command=self.add_user,
+                                    font=tk.font.Font(family="gisha", size="10"), bg=WHITE)
         add_user_button.place(relx=0.1, rely=0.55, relwidth=0.13)
 
-        username_txt = tk.Label(self, text="Username", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
+        username_txt = tk.Label(self, text="Username",
+                                font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         username_txt.place(relx=0.08, rely=0.18, relwidth=0.2)
 
-        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"), fg=PURPLE, bg=LIGHT_BLUE)
+        sign_in_txt = tk.Label(self, text="Sign in", font=tk.font.Font(family='tahoma', size='20', weight="bold"),
+                               fg=PURPLE, bg=LIGHT_BLUE)
         sign_in_txt.place(relx=0.08, rely=0.05, relwidth=0.2)
 
         self.username_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)
         self.username_entry.place(relx=0.05, rely=0.25, relwidth=0.26)
 
-        password_txt = tk.Label(self, text="Password", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
+        password_txt = tk.Label(self, text="Password",
+                                font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
         password_txt.place(relx=0.08, rely=0.33, relwidth=0.2)
 
         self.password_entry = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), show='$', bg=WHITE)

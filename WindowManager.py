@@ -1,4 +1,5 @@
 import tkinter as tk
+
 import Client
 import MainMenu
 from Consts import *

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import urllib.request
-import urllib.parse
-import re
 import os
+import re
 import subprocess
+import urllib.parse
+import urllib.request
+
 from Consts import *
 
 

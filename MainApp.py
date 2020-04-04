@@ -63,7 +63,8 @@ class Window(tk.Frame):
         make_playlist_button = tk.Button(self, text="Manage playlists", command=self.make_playlist, bg=LIGHT_LIGHT_BLUE)
         make_playlist_button.place(relx=0.6, rely=0.8, relwidth=0.2)
 
-        self.play_button = tk.Button(self, image=self.play_img, command=self.pick_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
+        self.play_button = tk.Button(self, image=self.play_img, command=self.pick_song, bg=LIGHT_LIGHT_BLUE,
+                                     fg=LIGHT_LIGHT_BLUE)
         self.play_button.image = self.play_img
         self.play_button.place(relx=0.425, rely=0.55, relwidth=0.15)
 
@@ -77,7 +78,8 @@ class Window(tk.Frame):
         img = load.resize((50, 50), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        next_song_button = tk.Button(self, image=render, command=self.next_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
+        next_song_button = tk.Button(self, image=render, command=self.next_song, bg=LIGHT_LIGHT_BLUE,
+                                     fg=LIGHT_LIGHT_BLUE)
         next_song_button.image = render
         next_song_button.place(relx=0.6, rely=0.55, relwidth=0.1)
 
@@ -85,11 +87,13 @@ class Window(tk.Frame):
         img = load.resize((50, 50), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(img)
 
-        last_song_button = tk.Button(self, image=render, command=self.last_song, bg=LIGHT_LIGHT_BLUE, fg=LIGHT_LIGHT_BLUE)
+        last_song_button = tk.Button(self, image=render, command=self.last_song, bg=LIGHT_LIGHT_BLUE,
+                                     fg=LIGHT_LIGHT_BLUE)
         last_song_button.image = render
         last_song_button.place(relx=0.3, rely=0.55, relwidth=0.1)
 
-        song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"), bg=LIGHT_BLUE)
+        song_txt = tk.Label(self, text="Song", font=tk.font.Font(family="century gothic", size="11", weight="bold"),
+                            bg=LIGHT_BLUE)
         song_txt.place(relx=0.3, rely=0.22, relwidth=0.4)
 
         self.search_box = tk.Entry(self.master, font=tk.font.Font(family='tahoma', size='12'), bg=WHITE)

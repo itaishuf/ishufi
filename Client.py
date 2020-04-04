@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import socket
-import time
-import pyaudio
 import queue
+import socket
 import threading
+import time
+
+import pyaudio
 
 from Consts import *
 
@@ -46,7 +47,7 @@ class Client(object):
             except socket.error as e:
                 print(e)
         end = time.time()
-        my_time = end-start
+        my_time = end - start
         print(my_time)
         return str(my_time)
 

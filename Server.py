@@ -1,16 +1,18 @@
-import socket
-import sys
-import time
-import database
-from pathlib import Path
+import glob
 import os
 import queue
+import socket
+import sys
 import threading
-import pyaudio
+import time
 import wave
-import glob
-from YoutubeDownloader import YoutubeDownloader
+from pathlib import Path
+
+import pyaudio
+
+import database
 from Consts import *
+from YoutubeDownloader import YoutubeDownloader
 
 
 class Server(object):
@@ -85,7 +87,7 @@ class Server(object):
         self.send_message(to_send)
 
     def delete_pl(self, user, playlist):
-        to_send = self.db.unlink_user_to_pl(user, playlist)
+        to_send = self.db.delete_pl(playlist)
         if to_send is None:
             self.send_message(ERROR)
         self.send_message(SUCCESS)
