@@ -49,6 +49,37 @@ REQ_AND_PARAMS = {STREAM_ACTION: 1,
                   REMOVE_SONG_FROM_PL: 2,
                   UNLINK_PLAYLIST: 2}
 
+HELP_STRINGS = {"Log In": "Opens the app if the user credentials are correct",
+                "Register": "Creates a new user and opens the app",
+                "Quit": "exits the app",
+                "pyimage2": "press this button start playing, to pause a song"
+                            " or to resume",
+                "pyimage3": "press this button start playing, to pause a song"
+                            " or to resume",
+                "pyimage4": "skips forward to the next song in queue",
+                "pyimage5": "plays again the last played song",
+                "backward 10s": "goes backwards 10 seconds in the"
+                                " current playing song",
+                "forward 10s": "goes forward 10 seconds in the"
+                               " current playing song",
+                "Add to queue": "adds the typed song to the queue",
+                "Download": "downloads the typed song to the server",
+                "Manage playlists": "opens the playlist manager window",
+                "quit": "quits the app",
+                "delete playlist": "deletes the chosen playlist",
+                "remove song from playlist": "choose a song and a playlist,"
+                                             " then press this button"
+                                             " to remove the song from"
+                                             " the playlist",
+                "add song to playlist": "choose a song and a playlist,"
+                                        " then press this button to add"
+                                        " the song to the playlist",
+                "play playlist": "play the chosen playlist",
+                "view all downloaded songs": "",
+                "create playlist": "choose songs from the box above, "
+                                   "enter a name for the new playlist,"
+                                   " then press this to create a new playlist"}
+
 
 WHITE = "#ffffff"
 PURPLE = "#8A23F1"
@@ -57,17 +88,17 @@ LIGHT_BLUE = "#aae1d9"
 LIGHT_LIGHT_BLUE = "#d0f3ee"
 BIG = '600x450'
 SMALL = '300x225'
-
-
-"""
-features
-ui יפה + images
-help page
-better choose action
-
-
-bugs
-cant play after download
-cant do anything while downloading
-songs playing too fast/slow
-"""
+TITLE = "Ishufi"
+TEXT = "text"
+RIGHT_CLICK = "<Button-3>"
+ZERO = 0
+ONE = 1
+UNDERSCORE = '_'
+SPACE = " "
+END = 'end'
+IMAGE = "image"
+PLAY = "play"
+PAUSE = "pause"
+ET = '@'
+DOLLAR = '$'
+DOESNT_EXIST = "song doesnt exist"

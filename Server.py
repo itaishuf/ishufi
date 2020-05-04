@@ -18,7 +18,8 @@ from YoutubeDownloader import YoutubeDownloader
 class Server(object):
     def __init__(self, ip, port, stream_port):
         try:
-            server_socket_streaming = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            server_socket_streaming = socket.socket(socket.AF_INET,
+                                                    socket.SOCK_DGRAM)
             server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             server_socket_streaming.bind((ip, stream_port))
             server_socket.bind((ip, port))
@@ -35,7 +36,8 @@ class Server(object):
 
     def choose_action(self, action, params, event):
         """
-        chooses the correct function to call according to the actions dictionary
+        chooses the correct function to call according
+        to the actions dictionary
         checks if the parameters are correct
         """
         if REQ_AND_PARAMS.get(action) != len(params):
@@ -100,9 +102,12 @@ class Server(object):
         """
         deleted a playlist
         """
-        to_send = self.db.delete_pl(playlist)
+        to_send = self.db.unlink_user_to_pl(user, playlist)
         if to_send is None:
             self.send_message(ERROR)
+        # to_send = self.db.delete_pl(playlist)
+        # if to_send is None:
+        #     self.send_message(ERROR)
         self.send_message(SUCCESS)
 
     def get_all_songs(self):
@@ -118,7 +123,8 @@ class Server(object):
         gets all playlists of a certain user
         """
         to_send = self.db.get_all_pls_of_user(username)
-        to_send = '$'.join(to_send)
+        to_send = DOLLAR.join(to_send)
+        print(to_send)
         self.send_message(to_send)
 
     def get_all_songs_in_pl(self, playlist):
@@ -126,15 +132,16 @@ class Server(object):
         gets a ll songs in a certain playlist
         """
         to_send = self.db.get_songs(playlist)
-        to_send = '$'.join(to_send)
+        to_send = DOLLAR.join(to_send)
         self.send_message(to_send)
 
     def create_new_pl(self, params):
         """
-        creates a new playlist with the given songs and links it the the given user
+        creates a new playlist with the given songs
+        and links it the the given user
         """
-        name = params[1]
-        user = params[0]
+        name = params[ONE]
+        user = params[ZERO]
         songs = params[2].split('&')
         msg = self.db.create_new_pl(songs, name, user)
         self.send_message(msg)
@@ -143,7 +150,7 @@ class Server(object):
         """
         downloads a song
         """
-        song = song.replace('_', ' ')
+        song = song.replace(UNDERSCORE, SPACE)
         downloader = YoutubeDownloader(song)
         msg = downloader.download()
         if msg == SUCCESS:
@@ -152,7 +159,8 @@ class Server(object):
 
     def update_db(self):
         """
-        makes sure the database holds only all the songs that are saved on the server
+        makes sure the database holds only all the songs
+        that are saved on the server
         """
         songs = self.db.get_all_songs()
         for song in songs:
@@ -160,7 +168,7 @@ class Server(object):
                 self.db.delete_song(song)
         files = []
         for song in glob.glob("songs\*.wav"):
-            to_append = song.split('\\')[1][:-4]
+            to_append = song.split('\\')[ONE][:-4]
             files.append(to_append)
         for song in files:
             if song not in songs:
@@ -176,7 +184,7 @@ class Server(object):
             return
         # sends metadata
         sample_rate, channels, my_format = get_metadata(path)
-        to_send = sample_rate + "$" + channels + '$' + my_format
+        to_send = sample_rate + DOLLAR + channels + DOLLAR + my_format
         skip_amount = get_byte_num(path)
         print('to send', to_send)
 
@@ -188,8 +196,9 @@ class Server(object):
             while data != EMPTY_MSG:
                 data = song.read(MSG_SIZE)
 
-                # if the user wanted to pause the function will raise a thread event
-                #  and stop until instructed to continue from outside the thread
+                # if the user wanted to pause the function will raise
+                # a thread event and stop until instructed to continue
+                # from outside the thread
                 if self.pause:
                     e.wait()
 
@@ -199,14 +208,13 @@ class Server(object):
                     if msg == FORWARD_ACTION:
                         song.read(int(skip_amount))
                     elif msg == BACKWARD_ACTION:
-                        song.seek(-1*int(skip_amount), 1)
+                        song.seek(-1 * int(skip_amount), ONE)
                     elif msg == STOP:
-                        print('stopping')
                         self.send_streaming_message(FINISH)
                         return
                 # sends the chunk and pauses
                 self.send_streaming_message(data)
-                time.sleep(MSG_SIZE * NO_LAG_MOD/int(sample_rate))
+                time.sleep(MSG_SIZE * NO_LAG_MOD / int(sample_rate))
             self.send_streaming_message(FINISH)
 
     def login_check(self, username, password):
@@ -214,23 +222,25 @@ class Server(object):
         checks if the username and password are correct
         """
         can_login, msg = self.db.check_login(username, password)
-        self.send_message(str(can_login) + "$" + msg)
+        self.send_message(str(can_login) + DOLLAR + msg)
 
     def add_check(self, username, password):
         """
         adds a new user
         """
         can_login, msg = self.db.add_user(username, password)
-        self.send_message(str(can_login) + "$" + msg)
+        self.send_message(str(can_login) + DOLLAR + msg)
 
     def receive_streaming_msg(self):
         """
         receives a message from the client on the streaming socket
         """
-        size, client_streaming_address = self.server_socket_streaming.recvfrom(HEADER_SIZE)
-        data, client_streaming_address = self.server_socket_streaming.recvfrom(int(size))
+        size, client_streaming_address = self.server_socket_streaming.recvfrom(
+            HEADER_SIZE)
+        data, client_streaming_address = self.server_socket_streaming.recvfrom(
+            int(size))
         data = data.decode()
-        data = data.split("$")
+        data = data.split(DOLLAR)
         self.client_streaming_address = client_streaming_address
         return data
 
@@ -239,8 +249,10 @@ class Server(object):
         sends a message to the client on the streaming socket
         """
         header, data = format_msg(data)
-        self.server_socket_streaming.sendto(header, self.client_streaming_address)
-        self.server_socket_streaming.sendto(data, self.client_streaming_address)
+        self.server_socket_streaming.sendto(header,
+                                            self.client_streaming_address)
+        self.server_socket_streaming.sendto(data,
+                                            self.client_streaming_address)
 
     def receive_msg(self):
         """
@@ -249,7 +261,7 @@ class Server(object):
         size, client_address = self.server_socket.recvfrom(HEADER_SIZE)
         data, client_address = self.server_socket.recvfrom(int(size))
         data = data.decode()
-        data = data.split("$")
+        data = data.split(DOLLAR)
         self.client_address = client_address
         return data
 
@@ -267,7 +279,8 @@ class Server(object):
         """
         e = threading.Event()
         reg_t = threading.Thread(target=self.handle_reg_client, args=(e,))
-        stream_t = threading.Thread(target=self.handle_stream_client, args=(e,))
+        stream_t = threading.Thread(target=self.handle_stream_client,
+                                    args=(e,))
         reg_t.start()
         stream_t.start()
 
@@ -278,7 +291,7 @@ class Server(object):
         try:
             while True:
                 client_req = self.receive_msg()
-                self.choose_action(client_req[0], client_req[1:], event)
+                self.choose_action(client_req[ZERO], client_req[ONE:], event)
         except socket.error as e:
             print(e)
 
@@ -289,7 +302,7 @@ class Server(object):
         try:
             while True:
                 client_req = self.receive_streaming_msg()
-                self.choose_action(client_req[0], client_req[1:], event)
+                self.choose_action(client_req[ZERO], client_req[ONE:], event)
         except socket.error as e:
             print('stream', e)
 
@@ -307,19 +320,19 @@ def get_byte_num(path):
     gets the number of bytes that represent 10 seconds in the song
     """
     sample, channels, my_format = get_metadata(path)
-    return (int(sample) * int(my_format) * int(channels)*15) / 8
+    return (int(sample) * int(my_format) * int(channels) * 15) / 8
 
 
 def choose_song(my_name):
     """
     chooses the file of the requested song and checks if its valid
     """
-    my_name = my_name.split('@')[0]
+    my_name = my_name.split(ET)[ZERO]
     path = ''
-    for filename in os.listdir(str(Path.cwd())+'/songs'):
+    for filename in os.listdir(str(Path.cwd()) + '/songs'):
         name = filename.split('\\')[-1]
-        name = name.split('.')[0]
-        name = name.split('@')[0]
+        name = name.split('.')[ZERO]
+        name = name.split(ET)[ZERO]
         if filename.endswith(".wav") and my_name == name:
             path = str(Path.cwd()) + r'\songs\%s' % filename
     if os.path.exists(path):

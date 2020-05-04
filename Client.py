@@ -11,7 +11,8 @@ from Consts import *
 
 class Client(object):
     def __init__(self):
-        self.my_socket_streaming = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.my_socket_streaming = socket.socket(socket.AF_INET,
+                                                 socket.SOCK_DGRAM)
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_stream_address = (IP, STREAM_PORT)
         self.server_address = (IP, PORT)
@@ -35,15 +36,16 @@ class Client(object):
         metadata, server_address = self.receive_streaming_msg()
         if metadata == INVALID_REQ.encode():
             return INVALID_REQ
-        metadata = metadata.decode().split('$')
-        sample_rate = int(metadata[0])
-        channels = int(metadata[1])
+        metadata = metadata.decode().split(DOLLAR)
+        sample_rate = int(metadata[ZERO])
+        channels = int(metadata[ONE])
         my_format = int(metadata[2])
 
         # starts getting song data from the server and initializes the stream
         new_data, server_address = self.receive_streaming_msg()
-        stream = self.p.open(format=my_format, channels=channels, rate=sample_rate,
-                             output=True, frames_per_buffer=4096)
+        stream = self.p.open(format=my_format, channels=channels,
+                             rate=sample_rate,
+                             output=True, frames_per_buffer=(MSG_SIZE / 2))
         start = time.time()
         # loop that gets new data from the server and wries it to the stream
         while new_data != FINISH:
@@ -53,7 +55,8 @@ class Client(object):
                 new_data, server_address = self.receive_streaming_msg()
             except socket.error as e:
                 print(e)
-        # checks the time it took to play the song, used to check if the stream is too fast or too slow
+        # checks the time it took to play the song, used to check
+        # if the stream is too fast or too slow
         end = time.time()
         my_time = end - start
         stream.close()
@@ -63,10 +66,10 @@ class Client(object):
         """
         sends message to download a new song and returns the answer
         """
-        to_send = DOWNLOAD_ACTION + "$" + song
+        to_send = DOWNLOAD_ACTION + DOLLAR + song
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        data = data[0]
+        data = data[ZERO]
         if data == INVALID_REQ:
             return False, "didn't enter song"
         elif data == SUCCESS:
@@ -78,7 +81,8 @@ class Client(object):
         """
         creates playlist and links the current user to it
         """
-        to_send = CREATE_PL_ACTION + '$' + self.current_user + '$' + playlist + '$' + '&'.join(songs)
+        to_send = CREATE_PL_ACTION + DOLLAR + self.current_user + DOLLAR + \
+                  playlist + DOLLAR + '&'.join(songs)
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -87,7 +91,7 @@ class Client(object):
         """
         unlinks a playlist from this user
         """
-        to_send = UNLINK_PLAYLIST + '$' + self.current_user + '$' + playlist
+        to_send = UNLINK_PLAYLIST + DOLLAR + self.current_user + DOLLAR + playlist
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -104,7 +108,7 @@ class Client(object):
         """
         gets list of all songs in a certain playlist
         """
-        to_send = GET_SONGS_IN_PL + '$' + playlist
+        to_send = GET_SONGS_IN_PL + DOLLAR + playlist
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -113,7 +117,7 @@ class Client(object):
         """
         gets a list of all playlists linked to this user
         """
-        to_send = GET_ALL_PLS_OF_USER + '$' + self.current_user
+        to_send = GET_ALL_PLS_OF_USER + DOLLAR + self.current_user
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -122,7 +126,7 @@ class Client(object):
         """
         removes a song from a playlist
         """
-        to_send = REMOVE_SONG_FROM_PL + '$' + song + '$' + pl
+        to_send = REMOVE_SONG_FROM_PL + DOLLAR + song + DOLLAR + pl
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -131,7 +135,7 @@ class Client(object):
         """
         adds a song to a playlist
         """
-        to_send = ADD_SONG_TO_PL + '$' + song + '$' + pl
+        to_send = ADD_SONG_TO_PL + DOLLAR + song + DOLLAR + pl
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         return data
@@ -162,15 +166,15 @@ class Client(object):
 
     def play_song_thread(self, lst):
         """
-        threaded function that calls the stream song method, lowest level wrapper to the actual stream function
+        threaded function that calls the stream song method,
+        lowest level wrapper to the actual stream function
         """
-        self.play_next_song = False
-        song = lst[0]
-        q = lst[1]
-        # checks whether the current song that is playing is the same as one that is requested
+        song = lst[ZERO]
+        q = lst[ONE]
+        # checks whether the current song that is playing is the same as one
+        # that is requested
         # so a song wont be played from the beginning while it is playing
         if self.song_playing == song:
-            print("playing same song")
             # pauses/resumes the song according to its current status
             if not self.paused:
                 self.paused = True
@@ -181,28 +185,33 @@ class Client(object):
                 self.un_pause()
                 return
         elif self.song_playing != "":
-            # stops the current playing song to play a different song without causing issues
+            # stops the current playing song to play a different song
+            # without causing issues
             self.send_message(STOP)
             time.sleep(0.4)
         self.song_playing = song
-        # tells the server to start streaming and starts listening for data in the client
-        to_send = STREAM_ACTION + "$" + song
+        # tells the server to start streaming and starts listening for data
+        # in the client
+        to_send = STREAM_ACTION + DOLLAR + song
         self.send_streaming_message(to_send)
-        print('playing', song)
         msg = self.play()
         # pushes a msg to the ui if the song that was requested isn't valid
         if msg == INVALID_REQ:
             q.put(INVALID_REQ)
         self.song_playing = ''
-        self.play_next_song = True
+        time.sleep(0.5)
+        if self.song_playing == '':
+            self.play_next_song = True
 
     def play_song_top(self, name):
         """
         calls the thread function to stream a song
         """
+        self.play_next_song = False
         self.song_stack.append(name)
         return_queue = queue.Queue()
-        t_play = threading.Thread(target=self.play_song_thread, args=((name, return_queue),))
+        t_play = threading.Thread(target=self.play_song_thread,
+                                  args=((name, return_queue),))
         t_play.start()
         time.sleep(0.1)
         if return_queue.empty():
@@ -212,40 +221,43 @@ class Client(object):
 
     def check_q(self):
         """
-        checks if a new song was added to the playing queue, plays it if no songs are currently playing
+        checks if a new song was added to the playing queue, plays it if no
+        songs are currently playing
         """
         time.sleep(2)
         while True:
             next_song = self.song_q.get()
             if next_song != '':
                 while not self.play_next_song:
-                    time.sleep(1)
-                print('adding', next_song)
-                self.play_song_top(next_song)
-            time.sleep(1)
+                    time.sleep(ONE)
+                time.sleep(ONE)
+                if self.play_next_song:
+                    self.play_song_top(next_song)
+                    self.play_next_song = False
+            time.sleep(ONE)
 
     def login(self, username, password):
         """
         checks if the username and password that the user submitted are correct
         """
-        to_send = LOGIN_ACTION + "$" + username + "$" + password
+        to_send = LOGIN_ACTION + DOLLAR + username + DOLLAR + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
         if data == INVALID_REQ:
             return False, "didn't enter username or password"
-        can_login = eval(data[0])
-        msg = " ".join(data[1:])
+        can_login = eval(data[ZERO])
+        msg = " ".join(data[ONE:])
         return can_login, msg
 
     def add_user(self, username, password):
         """
         adds a new user and returns a message to the gui if it was successful
         """
-        to_send = ADD_ACTION + "$" + username + "$" + password
+        to_send = ADD_ACTION + DOLLAR + username + DOLLAR + password
         self.send_message(to_send)
         data, server_address = self.receive_msg()
-        can_login = eval(data[0])
-        msg = " ".join(data[1:])
+        can_login = eval(data[ZERO])
+        msg = SPACE.join(data[ONE:])
         if data == INVALID_REQ:
             return False, "didn't enter username or password"
         return can_login, msg
@@ -263,10 +275,10 @@ class Client(object):
         receives a message from the server on the regular socket
         """
         try:
-            size, server_address = self.my_socket.recvfrom(5)
+            size, server_address = self.my_socket.recvfrom(HEADER_SIZE)
             data, server_address = self.my_socket.recvfrom(int(size))
             data = data.decode()
-            data = data.split('$')
+            data = data.split(DOLLAR)
             return data, server_address
         except OSError as e:
             print(e)
@@ -285,7 +297,7 @@ class Client(object):
         receives a message from the server on the streaming socket
         """
         try:
-            size, server_address = self.my_socket_streaming.recvfrom(5)
+            size, server_address = self.my_socket_streaming.recvfrom(HEADER_SIZE)
             data, server_address = self.my_socket_streaming.recvfrom(int(size))
             return data, server_address
         except OSError as e:
@@ -307,5 +319,5 @@ def format_msg(msg):
     if type(msg) == str:
         msg = msg.encode()
     header = str(len(msg))
-    header = header.zfill(5)
+    header = header.zfill(HEADER_SIZE)
     return header.encode(), msg

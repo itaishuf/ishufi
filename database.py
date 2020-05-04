@@ -32,13 +32,15 @@ class ConnectionDatabase:
         """
         if username != "":
             if not self.check_if_exist(username):
-                r = self.cursor.execute("SELECT password from users where username=?", (username,))
+                r = self.cursor.execute(
+                    "SELECT password from users where username=?", (username,))
                 self.connection.commit()
                 for p in r:
                     if p[0] == password:
                         return True, "welcome to ISHUFI"
                     else:
-                        return False, "username or password incorrect, please try again"
+                        return False, "username or password " \
+                                      "incorrect, please try again"
             else:
                 return False, "user does not exist, please try again"
         else:
@@ -62,13 +64,16 @@ class ConnectionDatabase:
         if new_name != "":
             if self.check_if_exist(new_name):
                 if new_password != "":
-                    self.cursor.execute("insert into users (username, password) values(?, ?)", (new_name, new_password))
+                    self.cursor.execute(
+                        "insert into users (username, password) values(?, ?)",
+                        (new_name, new_password))
                     self.connection.commit()
                     return True, "welcome to ISHUFI"
                 else:
                     return False, "please enter password"
             else:
-                return False, "the username you chose is taken please insert a different username"
+                return False, "the username you chose is taken please " \
+                              "insert a different username"
         else:
             return False, "please enter username"
 
@@ -76,14 +81,16 @@ class ConnectionDatabase:
         """
         removes a song from a playlist
         """
-        command = "UPDATE playlists SET %s = 0 WHERE songs = '%s'" % (playlist, song)
+        command = "UPDATE playlists SET %s = 0 WHERE songs = '%s'" % (
+            playlist, song)
         return self.execute(command)
 
     def add_song_to_pl(self, song, playlist):
         """
         adds a song to a playlist
         """
-        command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (playlist, song)
+        command = "UPDATE playlists SET %s = 1 WHERE songs = '%s'" % (
+            playlist, song)
         return self.execute(command)
 
     def check_if_linked(self, username, playlist):
@@ -91,7 +98,8 @@ class ConnectionDatabase:
         checks if user and playlist are linked
         """
         my_id = self.get_user_id(username)
-        command = "select * from user_to_list where user='%s' and playlist='%s'" % (my_id, playlist)
+        command = "select * from user_to_list where user='%s' and " \
+                  "playlist='%s'" % (my_id, playlist)
         data = self.execute(command)
         return data != []
 
@@ -104,7 +112,8 @@ class ConnectionDatabase:
         if self.check_if_linked(username, playlist):
             return
         my_id = self.get_user_id(username)
-        command = "INSERT INTO user_to_list(user, playlist) VALUES('%s', '%s')" % (my_id, playlist)
+        command = "INSERT INTO user_to_list(user, playlist) " \
+                  "VALUES('%s', '%s')" % (my_id, playlist)
         self.execute(command)
 
     def get_user_id(self, username):
@@ -124,14 +133,18 @@ class ConnectionDatabase:
         if not self.check_if_linked(username, playlist):
             return None
         my_id = self.get_user_id(username)
-        command = "DELETE FROM user_to_list WHERE playlist='%s' AND user='%s'" % (playlist, my_id)
-        return self.execute(command)
+        command = "DELETE FROM user_to_list WHERE playlist='%s' " \
+                  "AND user='%s'" % (playlist, my_id)
+        msg = self.execute(command)
+        return msg
 
     def delete_pl(self, playlist):
         """
         deletes a playlist
         """
+        print("deleting", playlist)
         column_list = self.get_column_list("playlists")
+        print(column_list)
         if playlist in column_list:
             column_list.remove(playlist)
         columns = format_column_list(column_list)
@@ -142,7 +155,9 @@ class ConnectionDatabase:
                   "CREATE TABLE %s(%s); " \
                   "INSERT INTO %s SELECT %s FROM t1_backup; " \
                   "DROP TABLE t1_backup; " \
-                  "COMMIT; " % (columns, columns, "playlists", "playlists", "playlists", columns, "playlists", columns)
+                  "COMMIT; " % (
+                      columns, columns, "playlists", "playlists", "playlists",
+                      columns, "playlists", columns)
         self.cursor.executescript(command)
         self.connection.commit()
 
@@ -171,7 +186,8 @@ class ConnectionDatabase:
         """
         creates a new empty playlist
         """
-        command = "alter table playlists add '%s' INTEGER NOT NULL DEFAULT 0" % playlist
+        command = "alter table playlists add '%s' INTEGER " \
+                  "NOT NULL DEFAULT 0" % playlist
         return self.execute(command)
 
     def check_if_pl_exists(self, playlist):

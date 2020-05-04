@@ -8,8 +8,10 @@ from Consts import *
 class WindowManager(object):
 
     def __init__(self):
-        self.active_frame_class = []  # a stack that holds all the window classes that are open
-        self.active_frame = []  # a stack that holds all the windows that are open
+        self.active_frame_class = []  # a stack that holds all the window
+        # classes that are open
+        self.active_frame = []  # a stack that
+        # holds all the windows that are open
         self.client = Client.Client()  # the client, links the ui to the server
         self.switch_frame(MainMenu.Window, BIG)  # starts the main menu screen
 
@@ -45,9 +47,10 @@ class WindowManager(object):
 
     def close_frame(self):
         """
-        updates the active frame stack and active frame class stack. then closes the top most frame
+        updates the active frame stack and active frame class stack.
+        then closes the top most frame
         """
-        if len(self.active_frame) != 0 and len(self.active_frame_class) != 0:
+        if len(self.active_frame) != ZERO and len(self.active_frame_class) != ZERO:
             my_frame = self.active_frame.pop()
             my_frame_class = self.active_frame_class.pop()
             my_frame_class.exit_window(my_frame)
